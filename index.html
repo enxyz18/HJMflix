@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HJMflix | Stream Smooth by Hj Maikel</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen font-sans">
+
+  <!-- Navbar -->
+  <nav class="p-4 bg-black/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-800">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+      <!-- Branding -->
+      <div>
+        <h1 class="text-3xl font-black tracking-wider text-red-600 uppercase">HJMflix</h1>
+        <p class="text-xs text-gray-400 font-medium tracking-widest -mt-1">by Hj Maikel</p>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="w-full sm:w-auto flex gap-2">
+        <input type="text" id="searchInput" placeholder="Cari filem..." 
+               class="w-full sm:w-64 px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white text-sm outline-none focus:border-red-600 transition">
+        <button onclick="searchMovies()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-semibold transition">Cari</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Player Modal (Video Overlay) -->
+  <div id="playerModal" class="hidden fixed inset-0 bg-black/95 flex flex-col justify-center items-center z-50 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-4xl flex justify-between items-center mb-2">
+      <span class="text-xs text-gray-400">Guna pelayar ber-adblock (cth: Brave) untuk UX terbaik tanpa pop-up.</span>
+      <button onclick="closePlayer()" class="text-red-500 hover:text-red-400 text-xl font-bold px-2 py-1">✕ Tutup</button>
+    </div>
+    
+    <div class="w-full max-w-4xl aspect-video bg-gray-900 rounded-xl overflow-hidden shadow-2xl border border-gray-800">
+      <iframe id="videoPlayer" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <!-- Switch Server Options -->
+    <div class="mt-4 flex gap-3">
+      <button onclick="changeProvider('vidlink')" id="btnVidlink" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-xs font-bold transition">Server 1 (VidLink)</button>
+      <button onclick="changeProvider('vidsrc')" id="btnVidsrc" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-xs font-bold transition">Server 2 (VidSrc)</button>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <main class="max-w-6xl mx-auto p-4 sm:p-6">
+    <h2 id="sectionTitle" class="text-xl font-bold mb-4 text-gray-200 border-l-4 border-red-600 pl-3">Trending Minggu Ini</h2>
+    <div id="movieGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+  </main>
+
+  <script>
+    let currentTmdbId = null;
+
+    // Fetch trending secara selamat melalui Vercel API Route
+    async function fetchTrending() {
+      try {
+        const res = await fetch('/api/movies?type=trending');
+        const data = await res.json();
+        displayMovies(data.results || []);
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+      }
+    }
+
+    // Carian filem melalui Vercel API Route
+    async function searchMovies() {
+      const query = document.getElementById('searchInput').value;
+      if (!query) return fetchTrending();
+      
+      document.getElementById('sectionTitle').innerText = `Hasil Carian: "${query}"`;
+      try {
+        const res = await fetch(`/api/movies?type=search&query=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        displayMovies(data.results || []);
+      } catch (error) {
+        console.error("Gagal membuat carian:", error);
+      }
+    }
+
+    // Papar senarai kad filem
+    function displayMovies(movies) {
+      const grid = document.getElementById('movieGrid');
+      if (!movies || movies.length === 0) {
+        grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">Tiada filem ditemui.</p>`;
+        return;
+      }
+      grid.innerHTML = movies.map(m => `
+        <div onclick="playMovie(${m.id})" class="group cursor-pointer bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-red-600/50 hover:scale-105 transition duration-300 shadow-md">
+          <img src="${m.poster_path ? 'https://image.tmdb.org/t/p/w500' + m.poster_path : 'https://via.placeholder.com/500x750?text=No+Poster'}" 
+               alt="${m.title}" class="w-full h-auto object-cover">
+          <div class="p-2">
+            <p class="text-xs font-semibold truncate group-hover:text-red-500 transition">${m.title}</p>
+            <p class="text-[10px] text-gray-400">${m.release_date ? m.release_date.split('-')[0] : 'N/A'}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Mainkan filem menggunakan Player Embed
+    function playMovie(tmdbId) {
+      currentTmdbId = tmdbId;
+      document.getElementById('playerModal').classList.remove('hidden');
+      changeProvider('vidlink');
+    }
+
+    // Tukar URL Embed mengikut provider
+    function changeProvider(provider) {
+      const iframe = document.getElementById('videoPlayer');
+      if (provider === 'vidlink') {
+        iframe.src = `https://vidlink.pro/movie/${currentTmdbId}`;
+      } else if (provider === 'vidsrc') {
+        iframe.src = `https://vidsrc.to/embed/movie/${currentTmdbId}`;
+      }
+    }
+
+    // Tutup Player
+    function closePlayer() {
+      document.getElementById('playerModal').classList.add('hidden');
+      document.getElementById('videoPlayer').src = '';
+    }
+
+    // Carian apabila menekan butang 'Enter'
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') searchMovies();
+    });
+
+    // Muat turun senarai trending secara automatik semasa mula
+    fetchTrending();
+  </script>
+</body>
+</html>
