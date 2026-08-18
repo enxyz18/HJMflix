@@ -28,51 +28,55 @@
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full space-y-10">
     
-    <!-- Container untuk Hasil Carian (Tersembunyi secara lalai) -->
+    <!-- Hasil Carian -->
     <section id="searchResultsSection" class="hidden">
       <h2 id="searchTitle" class="text-xl font-bold mb-4 text-red-500">Hasil Carian</h2>
       <div id="searchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
     </section>
 
-    <!-- Container Utama 4 Seksyen Homepage -->
+    <!-- 4 Seksyen Top 10 Platform -->
     <div id="homepageSections" class="space-y-10">
       
-      <!-- 1. Popular Movies -->
+      <!-- 1. Top 10 Movies on Netflix -->
       <section>
-        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
-          <h2 class="text-lg font-bold text-gray-100 flex items-center gap-2">🔥 Popular Movies</h2>
+        <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+          <span class="text-red-600 font-black text-xl">N</span>
+          <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Netflix</h2>
         </div>
-        <div id="popularMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div id="netflixMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
         </div>
       </section>
 
-      <!-- 2. Top Rated Movies -->
+      <!-- 2. Top 10 TV Series on Netflix -->
       <section>
-        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
-          <h2 class="text-lg font-bold text-gray-100 flex items-center gap-2">⭐ Top Rated Movies</h2>
+        <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+          <span class="text-red-600 font-black text-xl">N</span>
+          <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Netflix</h2>
         </div>
-        <div id="topRatedMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div id="netflixTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
         </div>
       </section>
 
-      <!-- 3. Popular TV Series -->
+      <!-- 3. Top 10 Movies on Prime -->
       <section>
-        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
-          <h2 class="text-lg font-bold text-gray-100 flex items-center gap-2">📺 Popular TV Series</h2>
+        <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+          <span class="text-blue-400 font-black text-xl">P</span>
+          <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Prime Video</h2>
         </div>
-        <div id="popularTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div id="primeMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
         </div>
       </section>
 
-      <!-- 4. Top Rated TV Series -->
+      <!-- 4. Top 10 TV Series on Prime -->
       <section>
-        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
-          <h2 class="text-lg font-bold text-gray-100 flex items-center gap-2">🏆 Top Rated TV Series</h2>
+        <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+          <span class="text-blue-400 font-black text-xl">P</span>
+          <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Prime Video</h2>
         </div>
-        <div id="topRatedTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div id="primeTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
         </div>
       </section>
@@ -92,7 +96,7 @@
       <iframe id="videoPlayer" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
     </div>
 
-    <!-- Kawalan Episode (Hanya muncul jika TV Series) -->
+    <!-- Kawalan Episode (Hanya jika TV Series) -->
     <div id="tvControls" class="w-full max-w-4xl mt-3 hidden flex items-center gap-3 bg-gray-900 p-2.5 rounded-lg border border-gray-800">
       <label class="text-xs text-gray-400 font-semibold">Season:</label>
       <input type="number" id="seasonInput" value="1" min="1" class="w-16 bg-black border border-gray-700 rounded px-2 py-1 text-xs text-center">
@@ -120,18 +124,17 @@
 
   <script>
     let currentTmdbId = null;
-    let currentMediaType = 'movie'; // 'movie' atau 'tv'
+    let currentMediaType = 'movie';
 
-    // Muat Turun Semua 4 Seksyen
     async function loadHomepage() {
       document.getElementById('searchResultsSection').classList.add('hidden');
       document.getElementById('homepageSections').classList.remove('hidden');
       document.getElementById('searchInput').value = '';
 
-      fetchSection('popular_movies', 'popularMoviesGrid', 'movie');
-      fetchSection('top_rated_movies', 'topRatedMoviesGrid', 'movie');
-      fetchSection('popular_tv', 'popularTvGrid', 'tv');
-      fetchSection('top_rated_tv', 'topRatedTvGrid', 'tv');
+      fetchSection('netflix_movies', 'netflixMoviesGrid', 'movie');
+      fetchSection('netflix_tv', 'netflixTvGrid', 'tv');
+      fetchSection('prime_movies', 'primeMoviesGrid', 'movie');
+      fetchSection('prime_tv', 'primeTvGrid', 'tv');
     }
 
     async function fetchSection(category, gridId, mediaType) {
@@ -140,7 +143,7 @@
         const res = await fetch(`/api/movies?category=${category}`);
         const data = await res.json();
         if (data.results) {
-          // Hadkan 10 item per seksyen supaya homepage kemas
+          // Ambil betul-betul 10 tajuk teratas sahaja
           displayGrid(data.results.slice(0, 10), grid, mediaType);
         }
       } catch (err) {
@@ -154,7 +157,7 @@
         return;
       }
 
-      gridElement.innerHTML = items.map(m => {
+      gridElement.innerHTML = items.map((m, index) => {
         const title = m.title || m.name;
         const date = m.release_date || m.first_air_date || '';
         const year = date ? date.split('-')[0] : 'N/A';
@@ -162,7 +165,13 @@
 
         return `
           <div onclick="playMedia(${m.id}, '${mediaType}', '${title.replace(/'/g, "\\'")}')" 
-               class="group cursor-pointer bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-red-600/50 hover:scale-105 transition duration-300 shadow-md">
+               class="group cursor-pointer bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-red-600/50 hover:scale-105 transition duration-300 shadow-md relative">
+            
+            <!-- Rank Badge #1 hingga #10 -->
+            <div class="absolute top-2 left-2 z-10 bg-red-600/90 backdrop-blur-sm text-white font-black text-xs px-2 py-0.5 rounded shadow">
+              #${index + 1}
+            </div>
+
             <div class="relative">
               <img src="${m.poster_path ? 'https://image.tmdb.org/t/p/w500' + m.poster_path : 'https://via.placeholder.com/500x750?text=No+Poster'}" 
                    alt="${title}" class="w-full h-auto object-cover" loading="lazy">
@@ -177,7 +186,6 @@
       }).join('');
     }
 
-    // Fungsi Carian Multi
     async function searchMedia() {
       const query = document.getElementById('searchInput').value.trim();
       if (!query) return loadHomepage();
@@ -201,7 +209,6 @@
       }
     }
 
-    // Buka Modal Player
     function playMedia(id, type, title) {
       currentTmdbId = id;
       currentMediaType = type;
@@ -223,10 +230,11 @@
     }
 
     function updateTvStream() {
-      changeProvider(document.querySelector('.server-btn.bg-red-600').id.replace('btn-', ''));
+      const activeBtn = document.querySelector('.server-btn.bg-red-600');
+      const provider = activeBtn ? activeBtn.id.replace('btn-', '') : 'vidlink';
+      changeProvider(provider);
     }
 
-    // Tukar Provider Player
     function changeProvider(provider) {
       const iframe = document.getElementById('videoPlayer');
       const season = document.getElementById('seasonInput').value || 1;
@@ -242,7 +250,6 @@
         else if (provider === 'vidsrc') iframe.src = `https://vidsrcme.ru/embed/movie/${currentTmdbId}`;
       }
 
-      // Highlight Butang Server
       document.querySelectorAll('.server-btn').forEach(btn => {
         btn.classList.remove('bg-red-600');
         btn.classList.add('bg-gray-800', 'hover:bg-gray-700');

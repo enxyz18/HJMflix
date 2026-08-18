@@ -21,21 +21,23 @@ export default async function handler(req, res) {
   if (type === 'search' && query) {
     url = `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
   } 
-  // 2. Kategori Homepage
+  // 2. Kategori Top 10 mengikut Provider (Region: MY)
   else {
     switch (category) {
-      case 'top_rated_movies':
-        url = `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}`;
+      case 'netflix_movies':
+        url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc`;
         break;
-      case 'popular_tv':
-        url = `https://api.themoviedb.org/3/tv/popular?api_key=${API_KEY}`;
+      case 'netflix_tv':
+        url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc`;
         break;
-      case 'top_rated_tv':
-        url = `https://api.themoviedb.org/3/tv/top_rated?api_key=${API_KEY}`;
+      case 'prime_movies':
+        url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=119&watch_region=MY&sort_by=popularity.desc`;
         break;
-      case 'popular_movies':
+      case 'prime_tv':
+        url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=119&watch_region=MY&sort_by=popularity.desc`;
+        break;
       default:
-        url = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`;
+        url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc`;
         break;
     }
   }
