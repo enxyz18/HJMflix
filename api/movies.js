@@ -15,31 +15,57 @@ export default async function handler(req, res) {
   }
 
   const { type, query, category } = req.query;
-  let url = '';
 
-  // 1. Carian Filem & Siri TV
+  // 1. Carian Pintar (Filem, TV Series & Pelakon)
   if (type === 'search' && query) {
-    url = `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
-  } 
-  // 2. Kategori Top 10 mengikut Provider (Region: MY)
-  else {
-    switch (category) {
-      case 'netflix_movies':
-        url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc`;
-        break;
-      case 'netflix_tv':
-        url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc`;
-        break;
-      case 'prime_movies':
-        url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=119&watch_region=MY&sort_by=popularity.desc`;
-        break;
-      case 'prime_tv':
-        url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=119&watch_region=MY&sort_by=popularity.desc`;
-        break;
-      default:
-        url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc`;
-        break;
+    try {
+      const searchUrl = `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
+      const response = await fetch(searchUrl);
+      const data = await response.json();
+
+      let combinedResults = [];
+
+      if (data.results) {
+        for (const item of data.results) {
+          if (item.media_type === 'movie' || item.media_type === 'tv') {
+            combinedResults.push(item);
+          } else if (item.media_type === 'person' && item.known_for) {
+            item.known_for.forEach(work => {
+              if (work.media_type === 'movie' || work.media_type === 'tv') {
+                combinedResults.push(work);
+              }
+            });
+          }
+        }
+      }
+
+      // Buang item duplikasi berdasarkan ID
+      const uniqueResults = Array.from(new Map(combinedResults.map(m => [m.id, m])).values());
+
+      return res.status(200).json({ results: uniqueResults });
+    } catch (error) {
+      return res.status(500).json({ error: "Gagal memproses carian pelakon/tajuk" });
     }
+  } 
+
+  // 2. Kategori Top 10 Platform (Homepage - Region MY)
+  let url = '';
+  switch (category) {
+    case 'netflix_movies':
+      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc`;
+      break;
+    case 'netflix_tv':
+      url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc`;
+      break;
+    case 'prime_movies':
+      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=119&watch_region=MY&sort_by=popularity.desc`;
+      break;
+    case 'prime_tv':
+      url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=119&watch_region=MY&sort_by=popularity.desc`;
+      break;
+    default:
+      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc`;
+      break;
   }
 
   try {
