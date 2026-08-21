@@ -52,3 +52,15 @@ async function searchMedia(page = 1) {
     if (searchGrid) searchGrid.innerHTML = '<p class="col-span-full text-red-500 text-sm">Gagal carian.</p>';
   }
 }
+
+// Panggilan API untuk mengambil maklumat penuh filem/TV
+async function fetchMediaDetails(id, type) {
+  try {
+    const res = await fetch(`/api/movies?type=details&id=${id}&media_type=${type}`);
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Gagal fetch details:", err);
+    return null;
+  }
+}

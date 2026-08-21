@@ -95,4 +95,30 @@ export default async function handler(req, res) {
   } catch (error) {
     return res.status(500).json({ error: "Gagal menyambung ke pelayan TMDB" });
   }
+
+  // Carian cast credits:
+if (type === 'details') {
+  const { id, media_type } = req.query;
+  const mType = media_type || 'movie';
+
+  try {
+    const [detailsRes, creditsRes, imagesRes, similarRes, recsRes] = await Promise.all([
+      fetch(`https://api.themoviedb.org/3/${mType}/${id}?api_key=${TMDB_API_KEY}`),
+      fetch(`https://api.themoviedb.org/3/${mType}/${id}/credits?api_key=${TMDB_API_KEY}`),
+      fetch(`https://api.themoviedb.org/3/${mType}/${id}/images?api_key=${TMDB_API_KEY}`),
+      fetch(`https://api.themoviedb.org/3/${mType}/${id}/similar?api_key=${TMDB_API_KEY}`),
+      fetch(`https://api.themoviedb.org/3/${mType}/${id}/recommendations?api_key=${TMDB_API_KEY}`)
+    ]);
+
+    const details = await detailsRes.json();
+    const credits = await creditsRes.json();
+    const images = await imagesRes.json();
+    const similar = await similarRes.json();
+    const recommendations = await recsRes.json();
+
+    return res.status(200).json({ details, credits, images, similar, recommendations });
+  } catch (err) {
+    return res.status(500).json({ error: 'Gagal mengambil data butiran' });
+  }
+}
 }
