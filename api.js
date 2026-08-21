@@ -2,7 +2,7 @@
    PANGGILAN API & FETCH DATA (TMDB / VERCEL)
    ========================================== */
 
-// Memuatkan data mengikut kategori dan papar dalam grid
+// Fetch section grid homepage
 async function fetchSection(category, gridId, mediaType, page = 1, limit = 20) {
   const grid = document.getElementById(gridId);
   if (!grid) return;
@@ -21,7 +21,31 @@ async function fetchSection(category, gridId, mediaType, page = 1, limit = 20) {
   }
 }
 
-// Carian Filem / TV Series
+// Fetch details filem/TV show
+async function fetchMediaDetails(id, type) {
+  try {
+    const res = await fetch(`/api/movies?type=details&id=${id}&media_type=${type}`);
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Gagal fetch details:", err);
+    return null;
+  }
+}
+
+// Fetch senarai episod mengikut musim
+async function fetchSeasonEpisodes(tvId, seasonNumber) {
+  try {
+    const res = await fetch(`/api/movies?type=season_episodes&id=${tvId}&season_number=${seasonNumber}`);
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Gagal fetch episodes:", err);
+    return null;
+  }
+}
+
+// Carian
 async function searchMedia(page = 1) {
   const searchInput = document.getElementById('searchInput');
   const query = searchInput ? searchInput.value.trim() : '';
@@ -50,17 +74,5 @@ async function searchMedia(page = 1) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
     if (searchGrid) searchGrid.innerHTML = '<p class="col-span-full text-red-500 text-sm">Gagal carian.</p>';
-  }
-}
-
-// Panggilan API untuk mengambil maklumat penuh filem/TV
-async function fetchMediaDetails(id, type) {
-  try {
-    const res = await fetch(`/api/movies?type=details&id=${id}&media_type=${type}`);
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    console.error("Gagal fetch details:", err);
-    return null;
   }
 }

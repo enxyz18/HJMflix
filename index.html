@@ -4,309 +4,279 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HJMflix (TV Friendly Edition)</title>
-  
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Style Khas TV -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-black text-white font-sans min-h-screen flex flex-col selection:bg-red-600 selection:text-white">
+<body class="bg-black text-white font-sans antialiased selection:bg-red-600 selection:text-white">
 
-  <!-- HEADER / NAVBAR -->
-  <header class="sticky top-0 z-40 bg-black/90 backdrop-blur-md border-b border-gray-800 px-6 py-4">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <h1 tabindex="0" onclick="loadHomepage()" onkeydown="if(event.key==='Enter') loadHomepage()" 
-            class="text-2xl sm:text-3xl font-black tracking-wider text-red-600 cursor-pointer focus:rounded-md px-1">
-          HJMflix
-        </h1>
-        <span class="text-[10px] bg-gray-800 text-gray-400 px-2.5 py-1 rounded-full border border-gray-700 font-semibold">
-          TV Edition
-        </span>
-      </div>
+  <!-- HEADER & BAR CARIAN -->
+  <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md border-b border-gray-800 px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="loadHomepage()">
+      <span class="text-red-600 font-black text-2xl tracking-wider">HJMflix</span>
+      <span class="bg-gray-800 text-gray-300 text-[10px] font-bold px-2 py-0.5 rounded border border-gray-700">TV Edition</span>
+    </div>
 
-      <!-- PETAK CARIAN -->
-      <div class="relative w-full sm:w-96">
-        <input type="text" id="searchInput" placeholder="Cari filem, siri TV atau pelakon..." 
-               tabindex="0"
-               class="w-full bg-gray-900 border border-gray-800 rounded-full px-5 py-2.5 text-sm text-white focus:outline-none focus:border-red-600 transition">
-        <button tabindex="0" onclick="searchMedia(1)" class="absolute right-3 top-2.5 text-gray-400 hover:text-white px-2 py-0.5 rounded-full">🔍</button>
-      </div>
+    <!-- CARIAN -->
+    <div class="relative w-64 sm:w-80">
+      <input type="text" id="searchInput" placeholder="Cari filem, siri TV..." 
+             class="w-full bg-gray-900 text-xs text-white placeholder-gray-500 rounded-full py-2 pl-4 pr-10 border border-gray-800 focus:outline-none focus:border-red-600 transition">
+      <button onclick="searchMedia(1)" class="absolute right-3 top-2 text-gray-400 hover:text-white">🔍</button>
     </div>
   </header>
 
-  <!-- LAYOUT UTAMA (SIDEBAR + MAIN CONTENT) -->
-  <div id="mainLayout" class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full flex flex-col lg:flex-row gap-8">
-    
-    <!-- SIDEBAR WIDGET (SEBELAH KIRI) -->
-    <aside class="w-full lg:w-64 flex-shrink-0">
-      <div class="lg:sticky lg:top-24 bg-gray-900/60 border border-gray-800/80 rounded-2xl p-4 backdrop-blur-md space-y-6">
-        
-        <div>
-          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Menu Utama</h3>
-          <button id="btn-home" tabindex="0" onclick="loadHomepage()" 
-                  class="w-full text-left px-4 py-3 rounded-xl text-sm font-semibold bg-red-600/10 text-red-500 border border-red-600/20 hover:bg-red-600 hover:text-white transition flex items-center gap-3">
-            🏠 <span>Laman Utama (Top 10)</span>
+  <!-- KANDUNGAN UTAMA -->
+  <main class="p-4 sm:p-6 max-w-7xl mx-auto space-y-8">
+
+    <!-- MAIN LAYOUT (SIDEBAR + GRID SECTION) -->
+    <div id="mainLayout" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+      
+      <!-- SIDEBAR (MENU Platform) -->
+      <aside class="md:col-span-3 space-y-4">
+        <div class="bg-gray-900/50 p-4 rounded-2xl border border-gray-800/80 space-y-2">
+          <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-2">Menu Utama</p>
+          <button tabindex="0" onclick="loadHomepage()" 
+                  class="w-full text-left text-xs font-bold px-3 py-2.5 rounded-xl bg-red-600/10 text-red-500 border border-red-600/30 hover:bg-red-600 hover:text-white transition flex items-center gap-2">
+            🏠 Laman Utama (Top 10)
           </button>
         </div>
 
-        <hr class="border-gray-800">
-
-        <!-- CATEGORY NAV -->
-        <div>
-          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Kategori Platform</h3>
-          <nav class="space-y-2">
-            <button tabindex="0" onclick="openPlatformPage('netflix', 'Netflix')" class="w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
-              <span class="w-7 h-7 rounded-lg bg-red-600/20 text-red-500 font-black flex items-center justify-center text-xs group-hover:bg-red-600 group-hover:text-white transition">N</span>
-              <span>Netflix</span>
-            </button>
-            <button tabindex="0" onclick="openPlatformPage('prime', 'Prime Video')" class="w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
-              <span class="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 font-black flex items-center justify-center text-xs group-hover:bg-blue-500 group-hover:text-white transition">P</span>
-              <span>Prime Video</span>
-            </button>
-            <button tabindex="0" onclick="openPlatformPage('disney', 'Disney+')" class="w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
-              <span class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 font-black flex items-center justify-center text-xs group-hover:bg-cyan-500 group-hover:text-white transition">D+</span>
-              <span>Disney+</span>
-            </button>
-            <button tabindex="0" onclick="openPlatformPage('hbo', 'HBO Max')" class="w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
-              <span class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 font-black flex items-center justify-center text-xs group-hover:bg-purple-500 group-hover:text-white transition">MAX</span>
-              <span>HBO Max</span>
-            </button>
-          </nav>
+        <div class="bg-gray-900/50 p-4 rounded-2xl border border-gray-800/80 space-y-2">
+          <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-2">Kategori Platform</p>
+          <button tabindex="0" onclick="openPlatformPage('netflix', 'Netflix')" class="w-full text-left text-xs font-bold px-3 py-2 rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-600"></span> Netflix
+          </button>
+          <button tabindex="0" onclick="openPlatformPage('prime', 'Prime Video')" class="w-full text-left text-xs font-bold px-3 py-2 rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-blue-500"></span> Prime Video
+          </button>
+          <button tabindex="0" onclick="openPlatformPage('disney', 'Disney+')" class="w-full text-left text-xs font-bold px-3 py-2 rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400"></span> Disney+
+          </button>
+          <button tabindex="0" onclick="openPlatformPage('hbo', 'HBO Max')" class="w-full text-left text-xs font-bold px-3 py-2 rounded-xl text-gray-300 hover:bg-gray-800 hover:text-white transition flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-purple-600"></span> HBO Max
+          </button>
         </div>
+      </aside>
 
-      </div>
-    </aside>
-
-    <!-- MAIN CONTENT AREA -->
-    <main class="flex-1 min-w-0 space-y-10">
-      
-      <!-- 1. HOMEPAGE SECTIONS -->
-      <div id="homepageSections" class="space-y-10">
-        <section>
-          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-            <span class="text-red-600 font-black text-xl">N</span>
-            <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Netflix</h2>
-          </div>
-          <div id="netflixMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-        </section>
-
-        <section>
-          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-            <span class="text-red-600 font-black text-xl">N</span>
-            <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Netflix</h2>
-          </div>
-          <div id="netflixTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-        </section>
-
-        <section>
-          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-            <span class="text-blue-400 font-black text-xl">P</span>
-            <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Prime Video</h2>
-          </div>
-          <div id="primeMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-        </section>
-
-        <section>
-          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-            <span class="text-blue-400 font-black text-xl">P</span>
-            <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Prime Video</h2>
-          </div>
-          <div id="primeTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-        </section>
-
-        <section>
-          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-            <span class="text-cyan-400 font-black text-xl">D+</span>
-            <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Disney+</h2>
-          </div>
-          <div id="disneyMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-        </section>
-
-        <section>
-          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-            <span class="text-cyan-400 font-black text-xl">D+</span>
-            <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Disney+</h2>
-          </div>
-          <div id="disneyTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-        </section>
-
-        <section>
-          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-            <span class="text-purple-400 font-black text-xl">MAX</span>
-            <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on HBO Max</h2>
-          </div>
-          <div id="hboMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-        </section>
-
-        <section>
-          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-            <span class="text-purple-400 font-black text-xl">MAX</span>
-            <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on HBO Max</h2>
-          </div>
-          <div id="hboTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-        </section>
-      </div>
-
-      <!-- 2. PLATFORM PAGE SECTION -->
-      <div id="platformPageSection" class="hidden space-y-10">
-        <h2 id="platformPageTitle" class="text-2xl font-black text-white border-b border-gray-800 pb-3"></h2>
+      <!-- SEKSYEN UTAMA -->
+      <div class="md:col-span-9 space-y-8">
         
-        <section>
-          <h3 class="text-md font-bold text-red-500 mb-3">Trending Movies</h3>
-          <div id="platformMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-        </section>
+        <!-- 1. HOMEPAGE SECTIONS -->
+        <div id="homepageSections" class="space-y-8">
+          <section class="space-y-3">
+            <h2 class="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-red-600"></span> Top 10 Netflix Movies
+            </h2>
+            <div id="netflixMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+          </section>
 
-        <section>
-          <h3 class="text-md font-bold text-yellow-500 mb-3">Trending TV Series</h3>
-          <div id="platformTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-        </section>
+          <section class="space-y-3">
+            <h2 class="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-red-600"></span> Top 10 Netflix TV Shows
+            </h2>
+            <div id="netflixTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+          </section>
 
-        <div class="flex items-center justify-center gap-4 pt-6 border-t border-gray-800">
-          <button id="platformPrevBtn" tabindex="0" onclick="changePlatformPage(-1)" class="bg-gray-800 hover:bg-gray-700 text-white text-xs px-5 py-2.5 rounded-xl font-bold transition disabled:opacity-30">❮ Prev</button>
-          <span id="platformPageNum" class="text-xs font-bold text-gray-400">Page 1</span>
-          <button id="platformNextBtn" tabindex="0" onclick="changePlatformPage(1)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-5 py-2.5 rounded-xl font-bold transition">Next ❯</button>
+          <section class="space-y-3">
+            <h2 class="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span> Top 10 Prime Movies
+            </h2>
+            <div id="primeMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+          </section>
+
+          <section class="space-y-3">
+            <h2 class="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span> Top 10 Prime TV Shows
+            </h2>
+            <div id="primeTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+          </section>
+
+          <section class="space-y-3">
+            <h2 class="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-400"></span> Top 10 Disney+ Movies
+            </h2>
+            <div id="disneyMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+          </section>
+
+          <section class="space-y-3">
+            <h2 class="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-400"></span> Top 10 Disney+ TV Shows
+            </h2>
+            <div id="disneyTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+          </section>
+
+          <section class="space-y-3">
+            <h2 class="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-purple-600"></span> Top 10 HBO Max Movies
+            </h2>
+            <div id="hboMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+          </section>
+
+          <section class="space-y-3">
+            <h2 class="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-purple-600"></span> Top 10 HBO Max TV Shows
+            </h2>
+            <div id="hboTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+          </section>
+        </div>
+
+        <!-- 2. PLATFORM HUB SECTION -->
+        <div id="platformPageSection" class="hidden space-y-6">
+          <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+            <h2 id="platformPageTitle" class="text-lg font-bold text-white"></h2>
+            <div class="flex items-center gap-2">
+              <button id="platformPrevBtn" onclick="changePlatformPage(-1)" class="bg-gray-800 hover:bg-gray-700 text-xs px-3 py-1 rounded">❮ Prev</button>
+              <span id="platformPageNum" class="text-xs font-bold text-gray-400">Page 1</span>
+              <button id="platformNextBtn" onclick="changePlatformPage(1)" class="bg-gray-800 hover:bg-gray-700 text-xs px-3 py-1 rounded">Next ❯</button>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <h3 class="text-xs font-bold text-gray-400 uppercase">Movies</h3>
+            <div id="platformMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+          </div>
+          <div class="space-y-4 pt-4">
+            <h3 class="text-xs font-bold text-gray-400 uppercase">TV Shows</h3>
+            <div id="platformTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+          </div>
+        </div>
+
+        <!-- 3. SEARCH RESULTS SECTION -->
+        <div id="searchResultsSection" class="hidden space-y-6">
+          <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+            <h2 id="searchTitle" class="text-lg font-bold text-white">Hasil Carian</h2>
+            <div class="flex items-center gap-2">
+              <button id="searchPrevBtn" onclick="changeSearchPage(-1)" class="bg-gray-800 hover:bg-gray-700 text-xs px-3 py-1 rounded">❮ Prev</button>
+              <span id="searchPageNum" class="text-xs font-bold text-gray-400">Page 1</span>
+              <button id="searchNextBtn" onclick="changeSearchPage(1)" class="bg-gray-800 hover:bg-gray-700 text-xs px-3 py-1 rounded">Next ❯</button>
+            </div>
+          </div>
+          <div id="searchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 4. MOVIE / TV DETAILS PAGE SECTION -->
+    <div id="detailsPageSection" class="hidden space-y-8">
+      <button tabindex="0" onclick="loadHomepage()" 
+              class="bg-gray-900 hover:bg-red-600 text-white text-xs font-bold px-4 py-2 rounded-xl border border-gray-800 transition">
+        ❮ Kembali Ke Laman Utama
+      </button>
+
+      <!-- BANNER & INFO -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start bg-gray-900/40 p-6 rounded-2xl border border-gray-800">
+        <div class="md:col-span-5 w-full rounded-xl overflow-hidden border border-gray-800 shadow-xl bg-gray-950">
+          <img id="detailBanner" src="" alt="Movie Banner" class="w-full h-auto object-cover">
+        </div>
+
+        <div class="md:col-span-7 space-y-4">
+          <div id="detailTitleContainer"></div>
+
+          <div class="flex items-center gap-3 text-xs sm:text-sm text-gray-400 font-semibold">
+            <span id="detailYear"></span>
+            <span>•</span>
+            <span id="detailRating" class="bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded border border-yellow-500/30"></span>
+            <span>•</span>
+            <span id="detailRuntime"></span>
+          </div>
+
+          <div id="detailGenres" class="flex flex-wrap gap-2 pt-1"></div>
+
+          <div class="pt-2">
+            <button id="detailWatchBtn" tabindex="0" 
+                    class="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-8 py-3 rounded-xl shadow-lg transition flex items-center gap-2">
+              ▶ Watch Now
+            </button>
+          </div>
+
+          <div class="pt-2">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Sinopsis</h3>
+            <p id="detailOverview" class="text-xs sm:text-sm text-gray-300 leading-relaxed max-h-36 overflow-y-auto pr-2"></p>
+          </div>
+
+          <div class="pt-2">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Cast</h3>
+            <div id="detailCast" class="flex gap-4 overflow-x-auto pb-2 scrollbar-none"></div>
+          </div>
         </div>
       </div>
 
-      <!-- 3. SEARCH RESULTS SECTION -->
-      <div id="searchResultsSection" class="hidden space-y-6">
-        <h2 id="searchTitle" class="text-xl font-bold text-red-500">Hasil Carian</h2>
-        <div id="searchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-
-        <div class="flex items-center justify-center gap-4 pt-6 border-t border-gray-800">
-          <button id="searchPrevBtn" tabindex="0" onclick="changeSearchPage(-1)" class="bg-gray-800 hover:bg-gray-700 text-white text-xs px-5 py-2.5 rounded-xl font-bold transition disabled:opacity-30">❮ Prev</button>
-          <span id="searchPageNum" class="text-xs font-bold text-gray-400">Page 1</span>
-          <button id="searchNextBtn" tabindex="0" onclick="changeSearchPage(1)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-5 py-2.5 rounded-xl font-bold transition">Next ❯</button>
+      <!-- KAWALAN EPISOD KHAS TV SERIES -->
+      <div id="tvSeriesEpisodesSection" class="hidden space-y-4 pt-4 border-t border-gray-800">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-white">Senarai Episod</h2>
+          <div class="flex items-center gap-2">
+            <label for="seasonSelect" class="text-xs font-bold text-gray-400">Pilih Musim:</label>
+            <select id="seasonSelect" onchange="onSeasonChange(this.value)" 
+                    class="bg-gray-800 text-white text-xs font-bold px-3 py-2 rounded-xl border border-gray-700 focus:outline-none focus:border-red-600">
+            </select>
+          </div>
         </div>
+        <div id="episodesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 pt-2"></div>
       </div>
 
-      <!-- 4. MOVIE / TV DETAILS PAGE SECTION -->
-      <div id="detailsPageSection" class="hidden space-y-8">
-        
-        <!-- BUTANG KEMBALI -->
-        <button tabindex="0" onclick="loadHomepage()" 
-                class="bg-gray-900 hover:bg-red-600 text-white text-xs font-bold px-4 py-2 rounded-xl border border-gray-800 transition">
-          ❮ Kembali Ke Laman Utama
-        </button>
-
-        <!-- BAHAGIAN UTAMA (LANDSCAPE BANNER + INFO) -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start bg-gray-900/40 p-6 rounded-2xl border border-gray-800">
-          
-          <!-- KIRI: LANDSCAPE BANNER (5 COLUMNS) -->
-          <div class="md:col-span-5 w-full rounded-xl overflow-hidden border border-gray-800 shadow-xl bg-gray-950">
-            <img id="detailBanner" src="" alt="Movie Banner" class="w-full h-auto object-cover">
-          </div>
-
-          <!-- KANAN: MAKLUMAT FILEM (7 COLUMNS) -->
-          <div class="md:col-span-7 space-y-4">
-            <!-- Title Logo / Title Text -->
-            <div id="detailTitleContainer"></div>
-
-            <!-- Year | Rating | Duration -->
-            <div class="flex items-center gap-3 text-xs sm:text-sm text-gray-400 font-semibold">
-              <span id="detailYear"></span>
-              <span>•</span>
-              <span id="detailRating" class="bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded border border-yellow-500/30"></span>
-              <span>•</span>
-              <span id="detailRuntime"></span>
-            </div>
-
-            <!-- Genres -->
-            <div id="detailGenres" class="flex flex-wrap gap-2 pt-1"></div>
-
-            <!-- Butang Watch -->
-            <div class="pt-2">
-              <button id="detailWatchBtn" tabindex="0" 
-                      class="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-8 py-3 rounded-xl shadow-lg transition flex items-center gap-2">
-                ▶ Watch Now
-              </button>
-            </div>
-
-            <!-- Sinopsis -->
-            <div class="pt-2">
-              <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Sinopsis</h3>
-              <p id="detailOverview" class="text-xs sm:text-sm text-gray-300 leading-relaxed max-h-36 overflow-y-auto pr-2"></p>
-            </div>
-
-            <!-- Cast (Pelakon) -->
-            <div class="pt-2">
-              <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Cast</h3>
-              <div id="detailCast" class="flex gap-4 overflow-x-auto pb-2 scrollbar-none"></div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- MOVIES LIKE THIS -->
+      <!-- SEKSYEN CADANGAN KHAS MOVIE -->
+      <div id="movieRecommendationsSection" class="space-y-6">
         <div class="space-y-3 pt-4">
           <h2 class="text-lg font-bold text-white border-b border-gray-800 pb-2">Movies Like This</h2>
           <div id="similarGrid" class="flex gap-4 overflow-x-auto pb-4 scrollbar-none"></div>
         </div>
 
-        <!-- YOU MAY ALSO LIKE -->
         <div class="space-y-3 pt-2">
           <h2 class="text-lg font-bold text-white border-b border-gray-800 pb-2">You May Also Like</h2>
           <div id="recommendationsGrid" class="flex gap-4 overflow-x-auto pb-4 scrollbar-none"></div>
         </div>
-
       </div>
-    </main>
-  </div>
-
-  <!-- 4. HALAMAN KHAS TONTONAN (WATCH PAGE) -->
-  <div id="watchPageSection" class="hidden min-h-screen bg-black text-white p-4 sm:p-8 max-w-7xl mx-auto space-y-6">
-    
-    <div class="flex items-center justify-between border-b border-gray-800 pb-4">
-      <button id="backBtn" tabindex="0" onclick="closeWatchPage()" 
-              class="bg-gray-900 hover:bg-red-600 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-xl border border-gray-800 flex items-center gap-2 transition">
-        ❮ Kembali Ke Senarai
-      </button>
-      <h2 id="watchMediaTitle" class="text-base sm:text-xl font-black text-red-500 truncate max-w-md"></h2>
     </div>
 
-    <div class="w-full aspect-video bg-gray-950 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
-      <iframe id="videoPlayer" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
-    </div>
+    <!-- 5. WATCH PAGE SECTION (PLAYER VIDEO) -->
+    <div id="watchPageSection" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <button id="backBtn" tabindex="0" onclick="closeWatchPage()" class="bg-gray-800 hover:bg-red-600 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
+          ❮ Kembali
+        </button>
+        <h2 id="watchMediaTitle" class="text-sm font-bold text-gray-200 truncate max-w-md"></h2>
+      </div>
 
-    <div id="tvControls" class="hidden bg-gray-900/80 border border-gray-800 p-4 rounded-2xl backdrop-blur-md flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-6">
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Season:</span>
-          <button tabindex="0" onclick="adjustSeason(-1)" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-lg font-black text-sm flex items-center justify-center transition">-</button>
-          <span id="seasonVal" class="w-8 text-center font-bold text-sm text-yellow-400">1</span>
-          <button tabindex="0" onclick="adjustSeason(1)" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-lg font-black text-sm flex items-center justify-center transition">+</button>
+      <!-- PLAYER IFRAME -->
+      <div class="w-full aspect-video bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-2xl relative">
+        <iframe id="videoPlayer" src="" class="w-full h-full" allowfullscreen frameborder="0"></iframe>
+      </div>
+
+      <!-- CONTROLS & SERVER SWITCH -->
+      <div class="flex flex-wrap items-center justify-between gap-4 bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+        <!-- TV Episode Selector in Watch Page -->
+        <div id="tvControls" class="hidden flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-400 font-semibold">Season:</span>
+            <button onclick="adjustSeason(-1)" class="bg-gray-800 hover:bg-red-600 text-white font-bold px-3 py-1 rounded">-</button>
+            <span id="seasonVal" class="text-sm font-bold text-white px-2">1</span>
+            <button onclick="adjustSeason(1)" class="bg-gray-800 hover:bg-red-600 text-white font-bold px-3 py-1 rounded">+</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-400 font-semibold">Episode:</span>
+            <button onclick="adjustEpisode(-1)" class="bg-gray-800 hover:bg-red-600 text-white font-bold px-3 py-1 rounded">-</button>
+            <span id="episodeVal" class="text-sm font-bold text-white px-2">1</span>
+            <button onclick="adjustEpisode(1)" class="bg-gray-800 hover:bg-red-600 text-white font-bold px-3 py-1 rounded">+</button>
+          </div>
         </div>
 
+        <!-- Server Switcher -->
         <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Episode:</span>
-          <button tabindex="0" onclick="adjustEpisode(-1)" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-lg font-black text-sm flex items-center justify-center transition">-</button>
-          <span id="episodeVal" class="w-8 text-center font-bold text-sm text-yellow-400">1</span>
-          <button tabindex="0" onclick="adjustEpisode(1)" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-lg font-black text-sm flex items-center justify-center transition">+</button>
+          <span class="text-xs text-gray-400 font-semibold">Server:</span>
+          <button id="btn-vidlink" onclick="changeProvider('vidlink')" class="server-btn bg-red-600 text-white text-xs px-3 py-1.5 rounded font-bold">VidLink</button>
+          <button id="btn-vidfast" onclick="changeProvider('vidfast')" class="server-btn bg-gray-800 hover:bg-gray-700 text-white text-xs px-3 py-1.5 rounded font-bold">VidFast</button>
+          <button id="btn-vidsrc" onclick="changeProvider('vidsrc')" class="server-btn bg-gray-800 hover:bg-gray-700 text-white text-xs px-3 py-1.5 rounded font-bold">VidSrc</button>
         </div>
       </div>
-
-      <span class="text-[11px] text-gray-500 hidden sm:inline">*Guna remote control untuk tekan + atau -</span>
     </div>
 
-    <div class="bg-gray-900/40 border border-gray-800/80 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div class="flex flex-wrap items-center gap-3">
-        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Pilih Server:</span>
-        <button id="btn-vidlink" tabindex="0" onclick="changeProvider('vidlink')" class="server-btn bg-red-600 px-4 py-2 rounded-xl text-xs font-bold transition">Server 1 (VidLink)</button>
-        <button id="btn-vidfast" tabindex="0" onclick="changeProvider('vidfast')" class="server-btn bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-xl text-xs font-bold transition">Server 2 (VidFast)</button>
-        <button id="btn-vidsrc" tabindex="0" onclick="changeProvider('vidsrc')" class="server-btn bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-xl text-xs font-bold transition">Server 3 (VidSrc)</button>
-      </div>
-      <p class="text-[11px] text-gray-500">Tukar server jika video tidak dimuatkan.</p>
-    </div>
+  </main>
 
-  </div>
-
-  <footer class="bg-gray-950 border-t border-gray-900 py-6 text-center text-xs text-gray-600 mt-12">
-    <p>© HJMflix TV — Powered by TMDB API & Vercel</p>
+  <footer class="border-t border-gray-900 mt-12 py-6 text-center text-xs text-gray-600">
+    © HJMflix TV — Powered by TMDB API & Vercel
   </footer>
 
-  <!-- SKRIP DIPANGGIL DI SINI -->
+  <!-- URUTAN SKRIP -->
   <script src="app.js"></script>
   <script src="api.js"></script>
 </body>

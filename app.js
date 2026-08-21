@@ -2,7 +2,6 @@
    LOGIK NAVIGASI, UI, DETAILS & WATCH PAGE
    ========================================== */
 
-// Global State Variables
 window.currentTmdbId = null;
 window.currentMediaType = 'movie';
 window.currentSeason = 1;
@@ -13,8 +12,8 @@ window.currentPlatformKey = '';
 window.currentPlatformTitle = '';
 window.currentPlatformPage = 1;
 window.currentSearchPage = 1;
+window.currentDetailsTvId = null;
 
-// Sembunyikan semua seksyen sebelum tukar skrin
 function hideAllSections() {
   document.getElementById('mainLayout')?.classList.add('hidden');
   document.getElementById('homepageSections')?.classList.add('hidden');
@@ -24,7 +23,6 @@ function hideAllSections() {
   document.getElementById('watchPageSection')?.classList.add('hidden');
 }
 
-// Muat Laman Utama (Homepage)
 async function loadHomepage() {
   hideAllSections();
   document.getElementById('mainLayout')?.classList.remove('hidden');
@@ -43,7 +41,6 @@ async function loadHomepage() {
   fetchSection('hbo_tv', 'hboTvGrid', 'tv', 1, 10);
 }
 
-// Buka Halaman Khas Platform
 async function openPlatformPage(platformKey, platformTitle, page = 1) {
   window.currentPlatformKey = platformKey;
   window.currentPlatformTitle = platformTitle;
@@ -74,7 +71,6 @@ function changeSearchPage(delta) {
   if (newPage >= 1) searchMedia(newPage);
 }
 
-// Papar senarai kad dalam bentuk Grid (Klik Kad akan buka Details Page)
 function displayGrid(items, gridElement, mediaType, showRank = false) {
   if (!gridElement) return;
 
@@ -119,7 +115,7 @@ function displayGrid(items, gridElement, mediaType, showRank = false) {
 }
 
 /* ==========================================
-   LOGIK MOVIE / TV DETAILS PAGE
+   LOGIK DETAILS PAGE (MOVIE VS TV SHOW)
    ========================================== */
 
 async function openDetailsPage(id, type) {
@@ -128,11 +124,24 @@ async function openDetailsPage(id, type) {
   const detailsSection = document.getElementById('detailsPageSection');
   if (detailsSection) detailsSection.classList.remove('hidden');
 
+  const isTv = type === 'tv';
+  window.currentDetailsTvId = isTv ? id : null;
+
+  const tvSection = document.getElementById('tvSeriesEpisodesSection');
+  const movieSection = document.getElementById('movieRecommendationsSection');
+
+  if (isTv) {
+    tvSection?.classList.remove('hidden');
+    movieSection?.classList.add('hidden');
+  } else {
+    tvSection?.classList.add('hidden');
+    movieSection?.classList.remove('hidden');
+  }
+
   document.getElementById('detailTitleContainer').innerHTML = '<h1 class="text-xl font-bold text-gray-400">Memuatkan...</h1>';
   document.getElementById('detailOverview').innerText = '';
   document.getElementById('detailCast').innerHTML = '';
-  document.getElementById('similarGrid').innerHTML = '';
-  document.getElementById('recommendationsGrid').innerHTML = '';
+  document.getElementById('episodesGrid').innerHTML = '';
 
   const data = await fetchMediaDetails(id, type);
   if (!data || !data.details) return;
@@ -140,16 +149,12 @@ async function openDetailsPage(id, type) {
   const details = data.details;
   const credits = data.credits;
   const images = data.images;
-  const similar = data.similar;
-  const recommendations = data.recommendations;
 
-  // Banner Landscape
   const backdrop = details.backdrop_path || details.poster_path;
   document.getElementById('detailBanner').src = backdrop 
     ? `https://image.tmdb.org/t/p/w780${backdrop}` 
     : 'https://via.placeholder.com/780x440?text=No+Image';
 
-  // Title / Logo
   const logo = images?.logos?.find(l => l.iso_639_1 === 'en' || l.iso_639_1 === null);
   const titleContainer = document.getElementById('detailTitleContainer');
   const titleText = details.title || details.name;
@@ -160,27 +165,19 @@ async function openDetailsPage(id, type) {
     titleContainer.innerHTML = `<h1 class="text-2xl sm:text-4xl font-black text-white">${titleText}</h1>`;
   }
 
-  // Metadata
   const date = details.release_date || details.first_air_date || '';
   document.getElementById('detailYear').innerText = date ? date.split('-')[0] : 'N/A';
   document.getElementById('detailRating').innerText = `⭐ ${details.vote_average ? details.vote_average.toFixed(1) : 'N/A'}`;
   
   const runtime = details.runtime || (details.episode_run_time ? details.episode_run_time[0] : null);
-  document.getElementById('detailRuntime').innerText = runtime ? `${runtime} mins` : (type === 'tv' ? 'TV Series' : 'N/A');
+  document.getElementById('detailRuntime').innerText = runtime ? `${runtime} mins` : (isTv ? 'TV Series' : 'N/A');
 
-  // Genres
   document.getElementById('detailGenres').innerHTML = (details.genres || []).map(g => 
     `<span class="bg-gray-800 text-gray-300 text-[10px] sm:text-xs px-2.5 py-1 rounded-full border border-gray-700 font-medium">${g.name}</span>`
   ).join('');
 
-  // Watch Button
-  const watchBtn = document.getElementById('detailWatchBtn');
-  if (watchBtn) watchBtn.onclick = () => playMedia(id, type, titleText);
-
-  // Overview
   document.getElementById('detailOverview').innerText = details.overview || 'Tiada sinopsis tersedia.';
 
-  // Cast
   const topCast = (credits?.cast || []).slice(0, 8);
   document.getElementById('detailCast').innerHTML = topCast.map(c => `
     <div class="flex-shrink-0 w-16 text-center space-y-1">
@@ -190,11 +187,75 @@ async function openDetailsPage(id, type) {
     </div>
   `).join('');
 
-  // Render Horizontal Lists (Movies Like This & You May Also Like)
-  renderHorizontalCards(similar?.results || [], 'similarGrid', type);
-  renderHorizontalCards(recommendations?.results || [], 'recommendationsGrid', type);
+  if (isTv && details.seasons) {
+    const seasonSelect = document.getElementById('seasonSelect');
+    const validSeasons = details.seasons.filter(s => s.season_number > 0);
+    
+    seasonSelect.innerHTML = validSeasons.map(s => 
+      `<option value="${s.season_number}">Season ${s.season_number} (${s.episode_count} Episod)</option>`
+    ).join('');
+
+    const initialSeason = validSeasons.length > 0 ? validSeasons[0].season_number : 1;
+    seasonSelect.value = initialSeason;
+    loadSeasonEpisodes(id, initialSeason, titleText);
+
+    const watchBtn = document.getElementById('detailWatchBtn');
+    if (watchBtn) {
+      watchBtn.innerText = '▶ Watch Season 1 Ep 1';
+      watchBtn.onclick = () => playMedia(id, 'tv', titleText, initialSeason, 1);
+    }
+  } else {
+    renderHorizontalCards(data.similar?.results || [], 'similarGrid', 'movie');
+    renderHorizontalCards(data.recommendations?.results || [], 'recommendationsGrid', 'movie');
+    
+    const watchBtn = document.getElementById('detailWatchBtn');
+    if (watchBtn) {
+      watchBtn.innerText = '▶ Watch Movie';
+      watchBtn.onclick = () => playMedia(id, 'movie', titleText);
+    }
+  }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function loadSeasonEpisodes(tvId, seasonNum, tvTitle) {
+  const grid = document.getElementById('episodesGrid');
+  if (!grid) return;
+  grid.innerHTML = '<p class="col-span-full text-xs text-gray-500">Memuatkan episod...</p>';
+
+  const data = await fetchSeasonEpisodes(tvId, seasonNum);
+  if (!data || !data.episodes || data.episodes.length === 0) {
+    grid.innerHTML = '<p class="col-span-full text-xs text-gray-500">Tiada episod ditemui.</p>';
+    return;
+  }
+
+  grid.innerHTML = data.episodes.map(ep => `
+    <div tabindex="0" 
+         onclick="playMedia(${tvId}, 'tv', '${tvTitle.replace(/'/g, "\\'")}', ${seasonNum}, ${ep.episode_number})"
+         onkeydown="if(event.key==='Enter') playMedia(${tvId}, 'tv', '${tvTitle.replace(/'/g, "\\'")}', ${seasonNum}, ${ep.episode_number})"
+         class="group cursor-pointer bg-gray-900/80 rounded-xl overflow-hidden border border-gray-800 hover:border-red-600 transition p-2 space-y-2 focus:outline-none">
+      
+      <div class="relative w-full aspect-video bg-gray-950 rounded-lg overflow-hidden">
+        <img src="${ep.still_path ? 'https://image.tmdb.org/t/p/w300' + ep.still_path : 'https://via.placeholder.com/300x169?text=No+Thumbnail'}" 
+             alt="${ep.name}" class="w-full h-full object-cover">
+        <span class="absolute bottom-1 right-1 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded font-bold">
+          EP ${ep.episode_number}
+        </span>
+      </div>
+
+      <div>
+        <p class="text-xs font-bold text-gray-200 truncate group-hover:text-red-500 transition">${ep.episode_number}. ${ep.name}</p>
+        <p class="text-[10px] text-gray-400 line-clamp-2 mt-1">${ep.overview || 'Tiada ringkasan episod.'}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function onSeasonChange(seasonNum) {
+  if (window.currentDetailsTvId) {
+    const titleText = document.getElementById('detailTitleContainer').innerText;
+    loadSeasonEpisodes(window.currentDetailsTvId, seasonNum, titleText);
+  }
 }
 
 function renderHorizontalCards(items, elementId, defaultType) {
@@ -226,19 +287,21 @@ function renderHorizontalCards(items, elementId, defaultType) {
 }
 
 /* ==========================================
-   LOGIK HALAMAN KHAS TONTONAN (WATCH PAGE)
+   LOGIK WATCH PAGE
    ========================================== */
 
-function playMedia(id, type, title) {
+function playMedia(id, type, title, season = 1, episode = 1) {
   window.currentTmdbId = id;
   window.currentMediaType = type;
-  window.currentSeason = 1;
-  window.currentEpisode = 1;
+  window.currentSeason = season;
+  window.currentEpisode = episode;
   window.currentProvider = 'vidlink';
 
   hideAllSections();
   document.getElementById('watchPageSection')?.classList.remove('hidden');
-  document.getElementById('watchMediaTitle').innerText = title;
+  
+  const displayTitle = type === 'tv' ? `${title} (S${season} E${episode})` : title;
+  document.getElementById('watchMediaTitle').innerText = displayTitle;
 
   const tvControls = document.getElementById('tvControls');
   if (type === 'tv') {
