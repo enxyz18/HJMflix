@@ -67,10 +67,10 @@ export default async function handler(req, res) {
       url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=119&watch_region=MY&sort_by=popularity.desc&page=${page}`;
       break;
     case 'disney_movies':
-      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=337|1229&sort_by=popularity.desc&page=${page}`;
+      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=122&sort_by=popularity.desc&page=${page}`;
       break;
     case 'disney_tv':
-      url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=337|1229&sort_by=popularity.desc&page=${page}`;
+      url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=122&sort_by=popularity.desc&page=${page}`;
       break;
     case 'hbo_movies':
       url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=1899|384&sort_by=popularity.desc&page=${page}`;
