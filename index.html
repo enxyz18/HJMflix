@@ -5,14 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HJMflix (by Hj Maikel)</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Smooth scroll untuk sidebar navigasi */
-    html { scroll-behavior: smooth; }
-  </style>
 </head>
 <body class="bg-black text-white font-sans min-h-screen flex flex-col">
 
-  <!-- Header / Navbar (Maintain seperti biasa) -->
+  <!-- Header / Navbar -->
   <header class="sticky top-0 z-40 bg-black/90 backdrop-blur-md border-b border-gray-800">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2">
@@ -24,12 +20,12 @@
       <div class="relative w-full sm:w-80">
         <input type="text" id="searchInput" placeholder="Cari filem, siri TV atau pelakon..." 
                class="w-full bg-gray-900 border border-gray-800 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600 transition">
-        <button onclick="searchMedia()" class="absolute right-3 top-2.5 text-gray-400 hover:text-white">🔍</button>
+        <button onclick="searchMedia(1)" class="absolute right-3 top-2.5 text-gray-400 hover:text-white">🔍</button>
       </div>
     </div>
   </header>
 
-  <!-- Layout Utama: Sidebar (Kiri) + Main Content (Kanan) -->
+  <!-- Layout Utama -->
   <div class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full flex flex-col lg:flex-row gap-8">
     
     <!-- SIDEBAR WIDGET (SEBELAH KIRI) -->
@@ -38,33 +34,33 @@
         
         <div>
           <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Menu Utama</h3>
-          <button onclick="loadHomepage()" class="w-full text-left px-3 py-2 rounded-xl text-sm font-semibold bg-red-600/10 text-red-500 border border-red-600/20 hover:bg-red-600 hover:text-white transition flex items-center gap-2">
-            🏠 <span>Laman Utama</span>
+          <button id="btn-home" onclick="loadHomepage()" class="w-full text-left px-3 py-2 rounded-xl text-sm font-semibold bg-red-600/10 text-red-500 border border-red-600/20 hover:bg-red-600 hover:text-white transition flex items-center gap-2">
+            🏠 <span>Laman Utama (Top 10)</span>
           </button>
         </div>
 
         <hr class="border-gray-800">
 
-        <!-- Platform Navigation Widgets -->
+        <!-- Navigasi Page Platform -->
         <div>
-          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Trending Streaming</h3>
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Kategori Platform</h3>
           <nav class="space-y-1.5">
-            <a href="#sec-netflix" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+            <button onclick="openPlatformPage('netflix', 'Netflix')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
               <span class="w-6 h-6 rounded-md bg-red-600/20 text-red-500 font-black flex items-center justify-center text-xs group-hover:bg-red-600 group-hover:text-white transition">N</span>
               <span>Netflix</span>
-            </a>
-            <a href="#sec-prime" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+            </button>
+            <button onclick="openPlatformPage('prime', 'Prime Video')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
               <span class="w-6 h-6 rounded-md bg-blue-500/20 text-blue-400 font-black flex items-center justify-center text-xs group-hover:bg-blue-500 group-hover:text-white transition">P</span>
               <span>Prime Video</span>
-            </a>
-            <a href="#sec-disney" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+            </button>
+            <button onclick="openPlatformPage('disney', 'Disney+')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
               <span class="w-6 h-6 rounded-md bg-cyan-500/20 text-cyan-400 font-black flex items-center justify-center text-xs group-hover:bg-cyan-500 group-hover:text-white transition">D+</span>
               <span>Disney+</span>
-            </a>
-            <a href="#sec-hbo" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+            </button>
+            <button onclick="openPlatformPage('hbo', 'HBO Max')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
               <span class="w-6 h-6 rounded-md bg-purple-500/20 text-purple-400 font-black flex items-center justify-center text-xs group-hover:bg-purple-500 group-hover:text-white transition">MAX</span>
               <span>HBO Max</span>
-            </a>
+            </button>
           </nav>
         </div>
 
@@ -74,108 +70,108 @@
     <!-- MAIN CONTENT AREA (SEBELAH KANAN) -->
     <main class="flex-1 min-w-0 space-y-10">
       
-      <!-- Hasil Carian -->
-      <section id="searchResultsSection" class="hidden">
-        <h2 id="searchTitle" class="text-xl font-bold mb-4 text-red-500">Hasil Carian</h2>
-        <div id="searchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-      </section>
+      <!-- 1. PAGE HOMEPAGE (TOP 10 ALL PLATFORMS) -->
+      <div id="homepageSections" class="space-y-10">
+        <section>
+          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+            <span class="text-red-600 font-black text-xl">N</span>
+            <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Netflix</h2>
+          </div>
+          <div id="netflixMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </section>
 
-      <!-- Seksyen Homepage Asal (Sekarang merangkumi 4 Platform) -->
-      <div id="homepageSections" class="space-y-12">
-        
-        <!-- 1. NETFLIX SECTION -->
-        <div id="sec-netflix" class="space-y-6 pt-2">
-          <section>
-            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-              <span class="text-red-600 font-black text-xl">N</span>
-              <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Netflix</h2>
-            </div>
-            <div id="netflixMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-            </div>
-          </section>
+        <section>
+          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+            <span class="text-red-600 font-black text-xl">N</span>
+            <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Netflix</h2>
+          </div>
+          <div id="netflixTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </section>
 
-          <section>
-            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-              <span class="text-red-600 font-black text-xl">N</span>
-              <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Netflix</h2>
-            </div>
-            <div id="netflixTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-            </div>
-          </section>
-        </div>
+        <section>
+          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+            <span class="text-blue-400 font-black text-xl">P</span>
+            <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Prime Video</h2>
+          </div>
+          <div id="primeMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </section>
 
-        <!-- 2. PRIME VIDEO SECTION -->
-        <div id="sec-prime" class="space-y-6 pt-6 border-t border-gray-800/60">
-          <section>
-            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-              <span class="text-blue-400 font-black text-xl">P</span>
-              <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Prime Video</h2>
-            </div>
-            <div id="primeMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-            </div>
-          </section>
+        <section>
+          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+            <span class="text-blue-400 font-black text-xl">P</span>
+            <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Prime Video</h2>
+          </div>
+          <div id="primeTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </section>
 
-          <section>
-            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-              <span class="text-blue-400 font-black text-xl">P</span>
-              <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Prime Video</h2>
-            </div>
-            <div id="primeTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-            </div>
-          </section>
-        </div>
+        <section>
+          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+            <span class="text-cyan-400 font-black text-xl">D+</span>
+            <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Disney+</h2>
+          </div>
+          <div id="disneyMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </section>
 
-        <!-- 3. DISNEY+ SECTION -->
-        <div id="sec-disney" class="space-y-6 pt-6 border-t border-gray-800/60">
-          <section>
-            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-              <span class="text-cyan-400 font-black text-xl">D+</span>
-              <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Disney+</h2>
-            </div>
-            <div id="disneyMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-            </div>
-          </section>
+        <section>
+          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+            <span class="text-cyan-400 font-black text-xl">D+</span>
+            <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Disney+</h2>
+          </div>
+          <div id="disneyTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </section>
 
-          <section>
-            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-              <span class="text-cyan-400 font-black text-xl">D+</span>
-              <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Disney+</h2>
-            </div>
-            <div id="disneyTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-            </div>
-          </section>
-        </div>
+        <section>
+          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+            <span class="text-purple-400 font-black text-xl">MAX</span>
+            <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on HBO Max</h2>
+          </div>
+          <div id="hboMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </section>
 
-        <!-- 4. HBO MAX SECTION -->
-        <div id="sec-hbo" class="space-y-6 pt-6 border-t border-gray-800/60">
-          <section>
-            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-              <span class="text-purple-400 font-black text-xl">MAX</span>
-              <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on HBO Max</h2>
-            </div>
-            <div id="hboMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-            </div>
-          </section>
-
-          <section>
-            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-              <span class="text-purple-400 font-black text-xl">MAX</span>
-              <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on HBO Max</h2>
-            </div>
-            <div id="hboTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-            </div>
-          </section>
-        </div>
-
+        <section>
+          <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+            <span class="text-purple-400 font-black text-xl">MAX</span>
+            <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on HBO Max</h2>
+          </div>
+          <div id="hboTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </section>
       </div>
+
+      <!-- 2. PAGE KHAS PLATFORM (Trending Movies & TV + Paginasi) -->
+      <div id="platformPageSection" class="hidden space-y-10">
+        <h2 id="platformPageTitle" class="text-2xl font-black text-white border-b border-gray-800 pb-3"></h2>
+        
+        <section>
+          <h3 class="text-md font-bold text-red-500 mb-3">Trending Movies</h3>
+          <div id="platformMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </section>
+
+        <section>
+          <h3 class="text-md font-bold text-yellow-500 mb-3">Trending TV Series</h3>
+          <div id="platformTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </section>
+
+        <!-- Kawalan Paginasi Platform -->
+        <div class="flex items-center justify-center gap-4 pt-6 border-t border-gray-800">
+          <button id="platformPrevBtn" onclick="changePlatformPage(-1)" class="bg-gray-800 hover:bg-gray-700 text-white text-xs px-4 py-2 rounded-lg font-bold transition disabled:opacity-40">❮ Muka Surat Sebelumnya</button>
+          <span id="platformPageNum" class="text-xs font-bold text-gray-400">Page 1</span>
+          <button id="platformNextBtn" onclick="changePlatformPage(1)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2 rounded-lg font-bold transition">Muka Surat Seterusnya ❯</button>
+        </div>
+      </div>
+
+      <!-- 3. PAGE KHAS CARIAN (+ Paginasi) -->
+      <div id="searchResultsSection" class="hidden space-y-6">
+        <h2 id="searchTitle" class="text-xl font-bold text-red-500">Hasil Carian</h2>
+        <div id="searchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+
+        <!-- Kawalan Paginasi Carian -->
+        <div class="flex items-center justify-center gap-4 pt-6 border-t border-gray-800">
+          <button id="searchPrevBtn" onclick="changeSearchPage(-1)" class="bg-gray-800 hover:bg-gray-700 text-white text-xs px-4 py-2 rounded-lg font-bold transition disabled:opacity-40">❮ Prev</button>
+          <span id="searchPageNum" class="text-xs font-bold text-gray-400">Page 1</span>
+          <button id="searchNextBtn" onclick="changeSearchPage(1)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2 rounded-lg font-bold transition">Next ❯</button>
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -186,12 +182,10 @@
       <button onclick="closePlayer()" class="text-gray-400 hover:text-white text-sm font-bold bg-gray-900 px-3 py-1 rounded-lg border border-gray-800">✕ Tutup</button>
     </div>
 
-    <!-- Container Player -->
     <div class="w-full max-w-4xl aspect-video bg-gray-900 rounded-xl overflow-hidden shadow-2xl border border-gray-800">
       <iframe id="videoPlayer" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
     </div>
 
-    <!-- Kawalan Episode (Siri TV) -->
     <div id="tvControls" class="w-full max-w-4xl mt-3 hidden flex items-center gap-3 bg-gray-900 p-2.5 rounded-lg border border-gray-800">
       <label class="text-xs text-gray-400 font-semibold">Season:</label>
       <input type="number" id="seasonInput" value="1" min="1" class="w-16 bg-black border border-gray-700 rounded px-2 py-1 text-xs text-center">
@@ -202,7 +196,6 @@
       <button onclick="updateTvStream()" class="bg-red-600 hover:bg-red-700 text-xs px-3 py-1 rounded font-bold transition">Tukar Episode</button>
     </div>
 
-    <!-- Kawalan Server -->
     <div class="w-full max-w-4xl mt-4">
       <div class="flex flex-wrap items-center gap-2">
         <span class="text-xs font-semibold text-gray-400 mr-2">Pilih Server:</span>
@@ -221,35 +214,76 @@
     let currentTmdbId = null;
     let currentMediaType = 'movie';
 
-    async function loadHomepage() {
+    // Variable State Navigation
+    let currentPlatformKey = '';
+    let currentPlatformTitle = '';
+    let currentPlatformPage = 1;
+    let currentSearchQuery = '';
+    let currentSearchPage = 1;
+
+    function hideAllSections() {
+      document.getElementById('homepageSections').classList.add('hidden');
+      document.getElementById('platformPageSection').classList.add('hidden');
       document.getElementById('searchResultsSection').classList.add('hidden');
+    }
+
+    async function loadHomepage() {
+      hideAllSections();
       document.getElementById('homepageSections').classList.remove('hidden');
       document.getElementById('searchInput').value = '';
 
-      fetchSection('netflix_movies', 'netflixMoviesGrid', 'movie');
-      fetchSection('netflix_tv', 'netflixTvGrid', 'tv');
-      fetchSection('prime_movies', 'primeMoviesGrid', 'movie');
-      fetchSection('prime_tv', 'primeTvGrid', 'tv');
-      fetchSection('disney_movies', 'disneyMoviesGrid', 'movie');
-      fetchSection('disney_tv', 'disneyTvGrid', 'tv');
-      fetchSection('hbo_movies', 'hboMoviesGrid', 'movie');
-      fetchSection('hbo_tv', 'hboTvGrid', 'tv');
+      fetchSection('netflix_movies', 'netflixMoviesGrid', 'movie', 1, 10);
+      fetchSection('netflix_tv', 'netflixTvGrid', 'tv', 1, 10);
+      fetchSection('prime_movies', 'primeMoviesGrid', 'movie', 1, 10);
+      fetchSection('prime_tv', 'primeTvGrid', 'tv', 1, 10);
+      fetchSection('disney_movies', 'disneyMoviesGrid', 'movie', 1, 10);
+      fetchSection('disney_tv', 'disneyTvGrid', 'tv', 1, 10);
+      fetchSection('hbo_movies', 'hboMoviesGrid', 'movie', 1, 10);
+      fetchSection('hbo_tv', 'hboTvGrid', 'tv', 1, 10);
     }
 
-    async function fetchSection(category, gridId, mediaType) {
+    async function openPlatformPage(platformKey, platformTitle, page = 1) {
+      currentPlatformKey = platformKey;
+      currentPlatformTitle = platformTitle;
+      currentPlatformPage = page;
+
+      hideAllSections();
+      const platformSection = document.getElementById('platformPageSection');
+      platformSection.classList.remove('hidden');
+      
+      document.getElementById('platformPageTitle').innerText = `${platformTitle} Hub — Page ${page}`;
+      document.getElementById('platformPageNum').innerText = `Page ${page}`;
+      document.getElementById('platformPrevBtn').disabled = page <= 1;
+
+      fetchSection(`${platformKey}_movies`, 'platformMoviesGrid', 'movie', page, 20);
+      fetchSection(`${platformKey}_tv`, 'platformTvGrid', 'tv', page, 20);
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function changePlatformPage(delta) {
+      const newPage = currentPlatformPage + delta;
+      if (newPage >= 1) {
+        openPlatformPage(currentPlatformKey, currentPlatformTitle, newPage);
+      }
+    }
+
+    async function fetchSection(category, gridId, mediaType, page = 1, limit = 20) {
       const grid = document.getElementById(gridId);
+      grid.innerHTML = '<p class="col-span-full text-gray-500 text-xs py-4">Memuatkan...</p>';
+
       try {
-        const res = await fetch(`/api/movies?category=${category}`);
+        const res = await fetch(`/api/movies?category=${category}&page=${page}`);
         const data = await res.json();
         if (data.results) {
-          displayGrid(data.results.slice(0, 10), grid, mediaType);
+          displayGrid(data.results.slice(0, limit), grid, mediaType, limit === 10);
         }
       } catch (err) {
         grid.innerHTML = `<p class="col-span-full text-red-500 text-xs">Gagal memuatkan data.</p>`;
       }
     }
 
-    function displayGrid(items, gridElement, mediaType) {
+    function displayGrid(items, gridElement, mediaType, showRank = false) {
       if (!items || items.length === 0) {
         gridElement.innerHTML = `<p class="col-span-full text-gray-500 text-xs py-4">Tiada kandungan.</p>`;
         return;
@@ -266,7 +300,7 @@
           <div onclick="playMedia(${m.id}, '${itemType}', '${title.replace(/'/g, "\\'")}')" 
                class="group cursor-pointer bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-red-600/50 hover:scale-105 transition duration-300 shadow-md relative">
             
-            ${mediaType !== 'multi' ? `
+            ${showRank ? `
               <div class="absolute top-2 left-2 z-10 bg-red-600/90 backdrop-blur-sm text-white font-black text-xs px-2 py-0.5 rounded shadow">
                 #${index + 1}
               </div>
@@ -288,25 +322,39 @@
       }).join('');
     }
 
-    async function searchMedia() {
+    async function searchMedia(page = 1) {
       const query = document.getElementById('searchInput').value.trim();
       if (!query) return loadHomepage();
 
-      document.getElementById('homepageSections').classList.add('hidden');
+      currentSearchQuery = query;
+      currentSearchPage = page;
+
+      hideAllSections();
       const searchSection = document.getElementById('searchResultsSection');
       const searchGrid = document.getElementById('searchGrid');
       
       searchSection.classList.remove('hidden');
-      document.getElementById('searchTitle').innerText = `Hasil Carian: "${query}"`;
+      document.getElementById('searchTitle').innerText = `Hasil Carian: "${query}" (Page ${page})`;
+      document.getElementById('searchPageNum').innerText = `Page ${page}`;
+      document.getElementById('searchPrevBtn').disabled = page <= 1;
+
       searchGrid.innerHTML = '<p class="col-span-full text-gray-500 text-sm py-8">Mencari...</p>';
 
       try {
-        const res = await fetch(`/api/movies?type=search&query=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/movies?type=search&query=${encodeURIComponent(query)}&page=${page}`);
         const data = await res.json();
         
-        displayGrid(data.results || [], searchGrid, 'multi');
+        displayGrid(data.results || [], searchGrid, 'multi', false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (err) {
         searchGrid.innerHTML = '<p class="col-span-full text-red-500 text-sm">Gagal carian.</p>';
+      }
+    }
+
+    function changeSearchPage(delta) {
+      const newPage = currentSearchPage + delta;
+      if (newPage >= 1) {
+        searchMedia(newPage);
       }
     }
 
@@ -369,7 +417,7 @@
     }
 
     document.getElementById('searchInput').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') searchMedia();
+      if (e.key === 'Enter') searchMedia(1);
     });
 
     loadHomepage();
