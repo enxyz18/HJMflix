@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HJMflix (by Hj Maikel)</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Smooth scroll untuk sidebar navigasi */
+    html { scroll-behavior: smooth; }
+  </style>
 </head>
 <body class="bg-black text-white font-sans min-h-screen flex flex-col">
 
-  <!-- Header / Navbar -->
+  <!-- Header / Navbar (Maintain seperti biasa) -->
   <header class="sticky top-0 z-40 bg-black/90 backdrop-blur-md border-b border-gray-800">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2">
@@ -25,64 +29,155 @@
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full space-y-10">
+  <!-- Layout Utama: Sidebar (Kiri) + Main Content (Kanan) -->
+  <div class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full flex flex-col lg:flex-row gap-8">
     
-    <!-- Hasil Carian -->
-    <section id="searchResultsSection" class="hidden">
-      <h2 id="searchTitle" class="text-xl font-bold mb-4 text-red-500">Hasil Carian</h2>
-      <div id="searchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
-    </section>
+    <!-- SIDEBAR WIDGET (SEBELAH KIRI) -->
+    <aside class="w-full lg:w-64 flex-shrink-0">
+      <div class="lg:sticky lg:top-24 bg-gray-900/60 border border-gray-800/80 rounded-2xl p-4 backdrop-blur-md space-y-6">
+        
+        <div>
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Menu Utama</h3>
+          <button onclick="loadHomepage()" class="w-full text-left px-3 py-2 rounded-xl text-sm font-semibold bg-red-600/10 text-red-500 border border-red-600/20 hover:bg-red-600 hover:text-white transition flex items-center gap-2">
+            🏠 <span>Laman Utama</span>
+          </button>
+        </div>
 
-    <!-- 4 Seksyen Top 10 Platform -->
-    <div id="homepageSections" class="space-y-10">
+        <hr class="border-gray-800">
+
+        <!-- Platform Navigation Widgets -->
+        <div>
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Trending Streaming</h3>
+          <nav class="space-y-1.5">
+            <a href="#sec-netflix" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+              <span class="w-6 h-6 rounded-md bg-red-600/20 text-red-500 font-black flex items-center justify-center text-xs group-hover:bg-red-600 group-hover:text-white transition">N</span>
+              <span>Netflix</span>
+            </a>
+            <a href="#sec-prime" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+              <span class="w-6 h-6 rounded-md bg-blue-500/20 text-blue-400 font-black flex items-center justify-center text-xs group-hover:bg-blue-500 group-hover:text-white transition">P</span>
+              <span>Prime Video</span>
+            </a>
+            <a href="#sec-disney" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+              <span class="w-6 h-6 rounded-md bg-cyan-500/20 text-cyan-400 font-black flex items-center justify-center text-xs group-hover:bg-cyan-500 group-hover:text-white transition">D+</span>
+              <span>Disney+</span>
+            </a>
+            <a href="#sec-hbo" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+              <span class="w-6 h-6 rounded-md bg-purple-500/20 text-purple-400 font-black flex items-center justify-center text-xs group-hover:bg-purple-500 group-hover:text-white transition">MAX</span>
+              <span>HBO Max</span>
+            </a>
+          </nav>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA (SEBELAH KANAN) -->
+    <main class="flex-1 min-w-0 space-y-10">
       
-      <!-- 1. Top 10 Movies on Netflix -->
-      <section>
-        <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-          <span class="text-red-600 font-black text-xl">N</span>
-          <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Netflix</h2>
-        </div>
-        <div id="netflixMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-        </div>
+      <!-- Hasil Carian -->
+      <section id="searchResultsSection" class="hidden">
+        <h2 id="searchTitle" class="text-xl font-bold mb-4 text-red-500">Hasil Carian</h2>
+        <div id="searchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
       </section>
 
-      <!-- 2. Top 10 TV Series on Netflix -->
-      <section>
-        <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-          <span class="text-red-600 font-black text-xl">N</span>
-          <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Netflix</h2>
-        </div>
-        <div id="netflixTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-        </div>
-      </section>
+      <!-- Seksyen Homepage Asal (Sekarang merangkumi 4 Platform) -->
+      <div id="homepageSections" class="space-y-12">
+        
+        <!-- 1. NETFLIX SECTION -->
+        <div id="sec-netflix" class="space-y-6 pt-2">
+          <section>
+            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+              <span class="text-red-600 font-black text-xl">N</span>
+              <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Netflix</h2>
+            </div>
+            <div id="netflixMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
+            </div>
+          </section>
 
-      <!-- 3. Top 10 Movies on Prime -->
-      <section>
-        <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-          <span class="text-blue-400 font-black text-xl">P</span>
-          <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Prime Video</h2>
+          <section>
+            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+              <span class="text-red-600 font-black text-xl">N</span>
+              <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Netflix</h2>
+            </div>
+            <div id="netflixTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
+            </div>
+          </section>
         </div>
-        <div id="primeMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-        </div>
-      </section>
 
-      <!-- 4. Top 10 TV Series on Prime -->
-      <section>
-        <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
-          <span class="text-blue-400 font-black text-xl">P</span>
-          <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Prime Video</h2>
-        </div>
-        <div id="primeTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
-        </div>
-      </section>
+        <!-- 2. PRIME VIDEO SECTION -->
+        <div id="sec-prime" class="space-y-6 pt-6 border-t border-gray-800/60">
+          <section>
+            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+              <span class="text-blue-400 font-black text-xl">P</span>
+              <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Prime Video</h2>
+            </div>
+            <div id="primeMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
+            </div>
+          </section>
 
-    </div>
-  </main>
+          <section>
+            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+              <span class="text-blue-400 font-black text-xl">P</span>
+              <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Prime Video</h2>
+            </div>
+            <div id="primeTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
+            </div>
+          </section>
+        </div>
+
+        <!-- 3. DISNEY+ SECTION -->
+        <div id="sec-disney" class="space-y-6 pt-6 border-t border-gray-800/60">
+          <section>
+            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+              <span class="text-cyan-400 font-black text-xl">D+</span>
+              <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on Disney+</h2>
+            </div>
+            <div id="disneyMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
+            </div>
+          </section>
+
+          <section>
+            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+              <span class="text-cyan-400 font-black text-xl">D+</span>
+              <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on Disney+</h2>
+            </div>
+            <div id="disneyTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
+            </div>
+          </section>
+        </div>
+
+        <!-- 4. HBO MAX SECTION -->
+        <div id="sec-hbo" class="space-y-6 pt-6 border-t border-gray-800/60">
+          <section>
+            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+              <span class="text-purple-400 font-black text-xl">MAX</span>
+              <h2 class="text-lg font-bold text-gray-100">Top 10 Movies on HBO Max</h2>
+            </div>
+            <div id="hboMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
+            </div>
+          </section>
+
+          <section>
+            <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
+              <span class="text-purple-400 font-black text-xl">MAX</span>
+              <h2 class="text-lg font-bold text-gray-100">Top 10 TV Series on HBO Max</h2>
+            </div>
+            <div id="hboTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <p class="col-span-full text-gray-500 text-sm">Memuatkan...</p>
+            </div>
+          </section>
+        </div>
+
+      </div>
+    </main>
+  </div>
 
   <!-- Modal Video Player -->
   <div id="playerModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm hidden flex flex-col items-center justify-center p-4">
@@ -96,7 +191,7 @@
       <iframe id="videoPlayer" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
     </div>
 
-    <!-- Kawalan Episode (Hanya jika TV Series) -->
+    <!-- Kawalan Episode (Siri TV) -->
     <div id="tvControls" class="w-full max-w-4xl mt-3 hidden flex items-center gap-3 bg-gray-900 p-2.5 rounded-lg border border-gray-800">
       <label class="text-xs text-gray-400 font-semibold">Season:</label>
       <input type="number" id="seasonInput" value="1" min="1" class="w-16 bg-black border border-gray-700 rounded px-2 py-1 text-xs text-center">
@@ -118,7 +213,7 @@
     </div>
   </div>
 
-  <footer class="bg-gray-950 border-t border-gray-900 py-6 text-center text-xs text-gray-600">
+  <footer class="bg-gray-950 border-t border-gray-900 py-6 text-center text-xs text-gray-600 mt-12">
     <p>© HJMflix — Built with TMDB API & Vercel</p>
   </footer>
 
@@ -135,6 +230,10 @@
       fetchSection('netflix_tv', 'netflixTvGrid', 'tv');
       fetchSection('prime_movies', 'primeMoviesGrid', 'movie');
       fetchSection('prime_tv', 'primeTvGrid', 'tv');
+      fetchSection('disney_movies', 'disneyMoviesGrid', 'movie');
+      fetchSection('disney_tv', 'disneyTvGrid', 'tv');
+      fetchSection('hbo_movies', 'hboMoviesGrid', 'movie');
+      fetchSection('hbo_tv', 'hboTvGrid', 'tv');
     }
 
     async function fetchSection(category, gridId, mediaType) {
@@ -157,9 +256,7 @@
       }
 
       gridElement.innerHTML = items.map((m, index) => {
-        // Tentukan jenis media sebenar (baca m.media_type jika carian)
         const itemType = (mediaType && mediaType !== 'multi') ? mediaType : (m.media_type || 'movie');
-        
         const title = m.title || m.name;
         const date = m.release_date || m.first_air_date || '';
         const year = date ? date.split('-')[0] : 'N/A';
@@ -169,7 +266,6 @@
           <div onclick="playMedia(${m.id}, '${itemType}', '${title.replace(/'/g, "\\'")}')" 
                class="group cursor-pointer bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-red-600/50 hover:scale-105 transition duration-300 shadow-md relative">
             
-            <!-- Rank Badge (Hanya tunjuk jika homepage) -->
             ${mediaType !== 'multi' ? `
               <div class="absolute top-2 left-2 z-10 bg-red-600/90 backdrop-blur-sm text-white font-black text-xs px-2 py-0.5 rounded shadow">
                 #${index + 1}

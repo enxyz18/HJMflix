@@ -48,7 +48,8 @@ export default async function handler(req, res) {
     }
   } 
 
-  // 2. Kategori Top 10 Platform (Homepage - Region MY)
+  // 2. Kategori Platform
+  // TMDB Provider ID: Netflix=8, Prime=119, Disney+=337, HBO Max=1899 (Region: MY/US)
   let url = '';
   switch (category) {
     case 'netflix_movies':
@@ -62,6 +63,18 @@ export default async function handler(req, res) {
       break;
     case 'prime_tv':
       url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=119&watch_region=MY&sort_by=popularity.desc`;
+      break;
+    case 'disney_movies':
+      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=337&watch_region=MY&sort_by=popularity.desc`;
+      break;
+    case 'disney_tv':
+      url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=337&watch_region=MY&sort_by=popularity.desc`;
+      break;
+    case 'hbo_movies':
+      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=1899|384&watch_region=US&sort_by=popularity.desc`;
+      break;
+    case 'hbo_tv':
+      url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=1899|384&watch_region=US&sort_by=popularity.desc`;
       break;
     default:
       url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc`;
