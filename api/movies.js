@@ -1,124 +1,77 @@
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Credentials', true);
+module.exports = async (req, res) => {
+  // TMDB API Key dari Environment Variable 
+  const TMDB_API_KEY = process.env.TMDB_API_KEY;
+
+  const { type, category, query, page = 1, id, media_type } = req.query;
+
+  // Set Response Headers (CORS)
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Content-Type', 'application/json');
 
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  const API_KEY = process.env.TMDB_API_KEY;
-
-  if (!API_KEY) {
-    return res.status(500).json({ error: "TMDB_API_KEY belum ditetapkan di Vercel!" });
-  }
-
-  const { type, query, category, page = 1 } = req.query;
-
-  // 1. Carian Pintar dengan Paginasi
-  if (type === 'search' && query) {
-    try {
-      const searchUrl = `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=${page}`;
-      const response = await fetch(searchUrl);
-      const data = await response.json();
-
-      let combinedResults = [];
-
-      if (data.results) {
-        for (const item of data.results) {
-          if (item.media_type === 'movie' || item.media_type === 'tv') {
-            combinedResults.push(item);
-          } else if (item.media_type === 'person' && item.known_for) {
-            item.known_for.forEach(work => {
-              if (work.media_type === 'movie' || work.media_type === 'tv') {
-                combinedResults.push(work);
-              }
-            });
-          }
-        }
+  try {
+    // 1. KONDISI: FETCH MOVIE / TV DETAILS FULL DATA
+    if (type === 'details') {
+      if (!id) {
+        return res.status(400).json({ error: 'ID filem tidak diberikan' });
       }
 
-      const uniqueResults = Array.from(new Map(combinedResults.map(m => [m.id, m])).values());
+      const mType = media_type || 'movie';
 
-      return res.status(200).json({ 
-        results: uniqueResults, 
-        page: data.page || 1, 
-        total_pages: data.total_pages || 1 
+      // Panggilan serentak ke TMDB untuk dapatkan butiran penuh, pelakon, logo & cadangan
+      const [detailsRes, creditsRes, imagesRes, similarRes, recsRes] = await Promise.all([
+        fetch(`https://api.themoviedb.org/3/${mType}/${id}?api_key=${TMDB_API_KEY}&language=en-US`),
+        fetch(`https://api.themoviedb.org/3/${mType}/${id}/credits?api_key=${TMDB_API_KEY}&language=en-US`),
+        fetch(`https://api.themoviedb.org/3/${mType}/${id}/images?api_key=${TMDB_API_KEY}&include_image_language=en,null`),
+        fetch(`https://api.themoviedb.org/3/${mType}/${id}/similar?api_key=${TMDB_API_KEY}&language=en-US&page=1`),
+        fetch(`https://api.themoviedb.org/3/${mType}/${id}/recommendations?api_key=${TMDB_API_KEY}&language=en-US&page=1`)
+      ]);
+
+      const details = await detailsRes.json();
+      const credits = await creditsRes.json();
+      const images = await imagesRes.json();
+      const similar = await similarRes.json();
+      const recommendations = await recsRes.json();
+
+      return res.status(200).json({
+        details,
+        credits,
+        images,
+        similar,
+        recommendations
       });
-    } catch (error) {
-      return res.status(500).json({ error: "Gagal memproses carian" });
     }
-  } 
 
-  // 2. Kategori Platform dengan Paginasi
-  let url = '';
-  switch (category) {
-    case 'netflix_movies':
-      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc&page=${page}`;
-      break;
-    case 'netflix_tv':
-      url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc&page=${page}`;
-      break;
-    case 'prime_movies':
-      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=119&watch_region=MY&sort_by=popularity.desc&page=${page}`;
-      break;
-    case 'prime_tv':
-      url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=119&watch_region=MY&sort_by=popularity.desc&page=${page}`;
-      break;
-    case 'disney_movies':
-      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=122&watch_region=MY&sort_by=popularity.desc&page=${page}`;
-      break;
-    case 'disney_tv':
-      url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=122&watch_region=MY&sort_by=popularity.desc&page=${page}`;
-      break;
-    case 'hbo_movies':
-      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=1899&watch_region=MY&sort_by=popularity.desc&page=${page}`;
-      break;
-    case 'hbo_tv':
-      url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_watch_providers=1899&watch_region=MY&sort_by=popularity.desc&page=${page}`;
-      break;
-    default:
-      url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_watch_providers=8&watch_region=MY&sort_by=popularity.desc&page=${page}`;
-      break;
-  }
+    // 2. KONDISI: CARIAN (SEARCH)
+    if (type === 'search') {
+      const searchRes = await fetch(
+        `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&page=${page}`
+      );
+      const searchData = await searchRes.json();
+      return res.status(200).json(searchData);
+    }
 
-  try {
-    const response = await fetch(url);
+    // 3. KONDISI: PLATFORM / CATEGORIES (DEFAULT)
+    let endpoint = '';
+    
+    // Pemetaan kategori platform
+    if (category === 'netflix_movies') endpoint = `/discover/movie?with_watch_providers=8&watch_region=MY`;
+    else if (category === 'netflix_tv') endpoint = `/discover/tv?with_watch_providers=8&watch_region=MY`;
+    else if (category === 'prime_movies') endpoint = `/discover/movie?with_watch_providers=119&watch_region=MY`;
+    else if (category === 'prime_tv') endpoint = `/discover/tv?with_watch_providers=119&watch_region=MY`;
+    else if (category === 'disney_movies') endpoint = `/discover/movie?with_watch_providers=122&watch_region=MY`;
+    else if (category === 'disney_tv') endpoint = `/discover/tv?with_watch_providers=122&watch_region=MY`;
+    else if (category === 'hbo_movies') endpoint = `/discover/movie?with_watch_providers=1899&watch_region=MY`;
+    else if (category === 'hbo_tv') endpoint = `/discover/tv?with_watch_providers=1899&watch_region=MY`;
+    else endpoint = `/movie/popular`; // Fallback
+
+    const response = await fetch(`https://api.themoviedb.org/3${endpoint}&api_key=${TMDB_API_KEY}&page=${page}`);
     const data = await response.json();
 
-    if (!response.ok) {
-      return res.status(response.status).json({ error: data.status_message || "TMDB Error" });
-    }
-
     return res.status(200).json(data);
+
   } catch (error) {
-    return res.status(500).json({ error: "Gagal menyambung ke pelayan TMDB" });
+    console.error('Server Error:', error);
+    return res.status(500).json({ error: 'Ralat Server Backend', message: error.message });
   }
-
-  // Carian cast credits:
-if (type === 'details') {
-  const { id, media_type } = req.query;
-  const mType = media_type || 'movie';
-
-  try {
-    const [detailsRes, creditsRes, imagesRes, similarRes, recsRes] = await Promise.all([
-      fetch(`https://api.themoviedb.org/3/${mType}/${id}?api_key=${TMDB_API_KEY}`),
-      fetch(`https://api.themoviedb.org/3/${mType}/${id}/credits?api_key=${TMDB_API_KEY}`),
-      fetch(`https://api.themoviedb.org/3/${mType}/${id}/images?api_key=${TMDB_API_KEY}`),
-      fetch(`https://api.themoviedb.org/3/${mType}/${id}/similar?api_key=${TMDB_API_KEY}`),
-      fetch(`https://api.themoviedb.org/3/${mType}/${id}/recommendations?api_key=${TMDB_API_KEY}`)
-    ]);
-
-    const details = await detailsRes.json();
-    const credits = await creditsRes.json();
-    const images = await imagesRes.json();
-    const similar = await similarRes.json();
-    const recommendations = await recsRes.json();
-
-    return res.status(200).json({ details, credits, images, similar, recommendations });
-  } catch (err) {
-    return res.status(500).json({ error: 'Gagal mengambil data butiran' });
-  }
-}
-}
+};
