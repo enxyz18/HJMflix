@@ -3,30 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HJMflix (by Hj Maikel)</title>
+  <title>HJMflix (TV Friendly Edition)</title>
+  
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Style Khas TV -->
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-black text-white font-sans min-h-screen flex flex-col">
+<body class="bg-black text-white font-sans min-h-screen flex flex-col selection:bg-red-600 selection:text-white">
 
-  <!-- Header / Navbar -->
-  <header class="sticky top-0 z-40 bg-black/90 backdrop-blur-md border-b border-gray-800">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <h1 class="text-2xl font-black tracking-wider text-red-600 cursor-pointer" onclick="loadHomepage()">HJMflix</h1>
-        <span class="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full border border-gray-700">by Hj Maikel</span>
+  <!-- HEADER / NAVBAR -->
+  <header class="sticky top-0 z-40 bg-black/90 backdrop-blur-md border-b border-gray-800 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <h1 tabindex="0" onclick="loadHomepage()" onkeydown="if(event.key==='Enter') loadHomepage()" 
+            class="text-2xl sm:text-3xl font-black tracking-wider text-red-600 cursor-pointer focus:rounded-md px-1">
+          HJMflix
+        </h1>
+        <span class="text-[10px] bg-gray-800 text-gray-400 px-2.5 py-1 rounded-full border border-gray-700 font-semibold">
+          TV Edition
+        </span>
       </div>
 
-      <!-- Petak Carian -->
-      <div class="relative w-full sm:w-80">
+      <!-- PETAK CARIAN -->
+      <div class="relative w-full sm:w-96">
         <input type="text" id="searchInput" placeholder="Cari filem, siri TV atau pelakon..." 
-               class="w-full bg-gray-900 border border-gray-800 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:border-red-600 transition">
-        <button onclick="searchMedia(1)" class="absolute right-3 top-2.5 text-gray-400 hover:text-white">🔍</button>
+               tabindex="0"
+               class="w-full bg-gray-900 border border-gray-800 rounded-full px-5 py-2.5 text-sm text-white focus:outline-none focus:border-red-600 transition">
+        <button tabindex="0" onclick="searchMedia(1)" class="absolute right-3 top-2.5 text-gray-400 hover:text-white px-2 py-0.5 rounded-full">🔍</button>
       </div>
     </div>
   </header>
 
-  <!-- Layout Utama -->
-  <div class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full flex flex-col lg:flex-row gap-8">
+  <!-- LAYOUT UTAMA (SIDEBAR + MAIN CONTENT) -->
+  <div id="mainLayout" class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full flex flex-col lg:flex-row gap-8">
     
     <!-- SIDEBAR WIDGET (SEBELAH KIRI) -->
     <aside class="w-full lg:w-64 flex-shrink-0">
@@ -34,31 +45,32 @@
         
         <div>
           <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Menu Utama</h3>
-          <button id="btn-home" onclick="loadHomepage()" class="w-full text-left px-3 py-2 rounded-xl text-sm font-semibold bg-red-600/10 text-red-500 border border-red-600/20 hover:bg-red-600 hover:text-white transition flex items-center gap-2">
+          <button id="btn-home" tabindex="0" onclick="loadHomepage()" 
+                  class="w-full text-left px-4 py-3 rounded-xl text-sm font-semibold bg-red-600/10 text-red-500 border border-red-600/20 hover:bg-red-600 hover:text-white transition flex items-center gap-3">
             🏠 <span>Laman Utama (Top 10)</span>
           </button>
         </div>
 
         <hr class="border-gray-800">
 
-        <!-- Navigasi Page Platform -->
+        <!-- CATEGORY NAV -->
         <div>
           <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Kategori Platform</h3>
-          <nav class="space-y-1.5">
-            <button onclick="openPlatformPage('netflix', 'Netflix')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
-              <span class="w-6 h-6 rounded-md bg-red-600/20 text-red-500 font-black flex items-center justify-center text-xs group-hover:bg-red-600 group-hover:text-white transition">N</span>
+          <nav class="space-y-2">
+            <button tabindex="0" onclick="openPlatformPage('netflix', 'Netflix')" class="w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+              <span class="w-7 h-7 rounded-lg bg-red-600/20 text-red-500 font-black flex items-center justify-center text-xs group-hover:bg-red-600 group-hover:text-white transition">N</span>
               <span>Netflix</span>
             </button>
-            <button onclick="openPlatformPage('prime', 'Prime Video')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
-              <span class="w-6 h-6 rounded-md bg-blue-500/20 text-blue-400 font-black flex items-center justify-center text-xs group-hover:bg-blue-500 group-hover:text-white transition">P</span>
+            <button tabindex="0" onclick="openPlatformPage('prime', 'Prime Video')" class="w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+              <span class="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 font-black flex items-center justify-center text-xs group-hover:bg-blue-500 group-hover:text-white transition">P</span>
               <span>Prime Video</span>
             </button>
-            <button onclick="openPlatformPage('disney', 'Disney+')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
-              <span class="w-6 h-6 rounded-md bg-cyan-500/20 text-cyan-400 font-black flex items-center justify-center text-xs group-hover:bg-cyan-500 group-hover:text-white transition">D+</span>
+            <button tabindex="0" onclick="openPlatformPage('disney', 'Disney+')" class="w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+              <span class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 font-black flex items-center justify-center text-xs group-hover:bg-cyan-500 group-hover:text-white transition">D+</span>
               <span>Disney+</span>
             </button>
-            <button onclick="openPlatformPage('hbo', 'HBO Max')" class="w-full text-left flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
-              <span class="w-6 h-6 rounded-md bg-purple-500/20 text-purple-400 font-black flex items-center justify-center text-xs group-hover:bg-purple-500 group-hover:text-white transition">MAX</span>
+            <button tabindex="0" onclick="openPlatformPage('hbo', 'HBO Max')" class="w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition group">
+              <span class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 font-black flex items-center justify-center text-xs group-hover:bg-purple-500 group-hover:text-white transition">MAX</span>
               <span>HBO Max</span>
             </button>
           </nav>
@@ -67,10 +79,10 @@
       </div>
     </aside>
 
-    <!-- MAIN CONTENT AREA (SEBELAH KANAN) -->
+    <!-- MAIN CONTENT AREA -->
     <main class="flex-1 min-w-0 space-y-10">
       
-      <!-- 1. PAGE HOMEPAGE (TOP 10 ALL PLATFORMS) -->
+      <!-- 1. HOMEPAGE SECTIONS -->
       <div id="homepageSections" class="space-y-10">
         <section>
           <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-2">
@@ -137,7 +149,7 @@
         </section>
       </div>
 
-      <!-- 2. PAGE KHAS PLATFORM (Trending Movies & TV + Paginasi) -->
+      <!-- 2. PLATFORM PAGE SECTION -->
       <div id="platformPageSection" class="hidden space-y-10">
         <h2 id="platformPageTitle" class="text-2xl font-black text-white border-b border-gray-800 pb-3"></h2>
         
@@ -151,276 +163,81 @@
           <div id="platformTvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
         </section>
 
-        <!-- Kawalan Paginasi Platform -->
         <div class="flex items-center justify-center gap-4 pt-6 border-t border-gray-800">
-          <button id="platformPrevBtn" onclick="changePlatformPage(-1)" class="bg-gray-800 hover:bg-gray-700 text-white text-xs px-4 py-2 rounded-lg font-bold transition disabled:opacity-40">❮ Muka Surat Sebelumnya</button>
+          <button id="platformPrevBtn" tabindex="0" onclick="changePlatformPage(-1)" class="bg-gray-800 hover:bg-gray-700 text-white text-xs px-5 py-2.5 rounded-xl font-bold transition disabled:opacity-30">❮ Prev</button>
           <span id="platformPageNum" class="text-xs font-bold text-gray-400">Page 1</span>
-          <button id="platformNextBtn" onclick="changePlatformPage(1)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2 rounded-lg font-bold transition">Muka Surat Seterusnya ❯</button>
+          <button id="platformNextBtn" tabindex="0" onclick="changePlatformPage(1)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-5 py-2.5 rounded-xl font-bold transition">Next ❯</button>
         </div>
       </div>
 
-      <!-- 3. PAGE KHAS CARIAN (+ Paginasi) -->
+      <!-- 3. SEARCH RESULTS SECTION -->
       <div id="searchResultsSection" class="hidden space-y-6">
         <h2 id="searchTitle" class="text-xl font-bold text-red-500">Hasil Carian</h2>
         <div id="searchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
 
-        <!-- Kawalan Paginasi Carian -->
         <div class="flex items-center justify-center gap-4 pt-6 border-t border-gray-800">
-          <button id="searchPrevBtn" onclick="changeSearchPage(-1)" class="bg-gray-800 hover:bg-gray-700 text-white text-xs px-4 py-2 rounded-lg font-bold transition disabled:opacity-40">❮ Prev</button>
+          <button id="searchPrevBtn" tabindex="0" onclick="changeSearchPage(-1)" class="bg-gray-800 hover:bg-gray-700 text-white text-xs px-5 py-2.5 rounded-xl font-bold transition disabled:opacity-30">❮ Prev</button>
           <span id="searchPageNum" class="text-xs font-bold text-gray-400">Page 1</span>
-          <button id="searchNextBtn" onclick="changeSearchPage(1)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2 rounded-lg font-bold transition">Next ❯</button>
+          <button id="searchNextBtn" tabindex="0" onclick="changeSearchPage(1)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-5 py-2.5 rounded-xl font-bold transition">Next ❯</button>
         </div>
       </div>
 
     </main>
   </div>
 
-  <!-- Modal Video Player -->
-  <div id="playerModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm hidden flex flex-col items-center justify-center p-4">
-    <div class="w-full max-w-4xl flex justify-between items-center mb-2">
-      <span id="playerMediaTitle" class="text-sm font-bold text-gray-300 truncate max-w-md">Pemutar Video</span>
-      <button onclick="closePlayer()" class="text-gray-400 hover:text-white text-sm font-bold bg-gray-900 px-3 py-1 rounded-lg border border-gray-800">✕ Tutup</button>
+  <!-- 4. HALAMAN KHAS TONTONAN (WATCH PAGE) -->
+  <div id="watchPageSection" class="hidden min-h-screen bg-black text-white p-4 sm:p-8 max-w-7xl mx-auto space-y-6">
+    
+    <div class="flex items-center justify-between border-b border-gray-800 pb-4">
+      <button id="backBtn" tabindex="0" onclick="closeWatchPage()" 
+              class="bg-gray-900 hover:bg-red-600 text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-xl border border-gray-800 flex items-center gap-2 transition">
+        ❮ Kembali Ke Senarai
+      </button>
+      <h2 id="watchMediaTitle" class="text-base sm:text-xl font-black text-red-500 truncate max-w-md"></h2>
     </div>
 
-    <div class="w-full max-w-4xl aspect-video bg-gray-900 rounded-xl overflow-hidden shadow-2xl border border-gray-800">
+    <div class="w-full aspect-video bg-gray-950 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
       <iframe id="videoPlayer" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
     </div>
 
-    <div id="tvControls" class="w-full max-w-4xl mt-3 hidden flex items-center gap-3 bg-gray-900 p-2.5 rounded-lg border border-gray-800">
-      <label class="text-xs text-gray-400 font-semibold">Season:</label>
-      <input type="number" id="seasonInput" value="1" min="1" class="w-16 bg-black border border-gray-700 rounded px-2 py-1 text-xs text-center">
-      
-      <label class="text-xs text-gray-400 font-semibold">Episode:</label>
-      <input type="number" id="episodeInput" value="1" min="1" class="w-16 bg-black border border-gray-700 rounded px-2 py-1 text-xs text-center">
-      
-      <button onclick="updateTvStream()" class="bg-red-600 hover:bg-red-700 text-xs px-3 py-1 rounded font-bold transition">Tukar Episode</button>
+    <div id="tvControls" class="hidden bg-gray-900/80 border border-gray-800 p-4 rounded-2xl backdrop-blur-md flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-6">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Season:</span>
+          <button tabindex="0" onclick="adjustSeason(-1)" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-lg font-black text-sm flex items-center justify-center transition">-</button>
+          <span id="seasonVal" class="w-8 text-center font-bold text-sm text-yellow-400">1</span>
+          <button tabindex="0" onclick="adjustSeason(1)" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-lg font-black text-sm flex items-center justify-center transition">+</button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Episode:</span>
+          <button tabindex="0" onclick="adjustEpisode(-1)" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-lg font-black text-sm flex items-center justify-center transition">-</button>
+          <span id="episodeVal" class="w-8 text-center font-bold text-sm text-yellow-400">1</span>
+          <button tabindex="0" onclick="adjustEpisode(1)" class="bg-gray-800 hover:bg-red-600 w-9 h-9 rounded-lg font-black text-sm flex items-center justify-center transition">+</button>
+        </div>
+      </div>
+
+      <span class="text-[11px] text-gray-500 hidden sm:inline">*Guna remote control untuk tekan + atau -</span>
     </div>
 
-    <div class="w-full max-w-4xl mt-4">
-      <div class="flex flex-wrap items-center gap-2">
-        <span class="text-xs font-semibold text-gray-400 mr-2">Pilih Server:</span>
-        <button id="btn-vidlink" onclick="changeProvider('vidlink')" class="server-btn bg-red-600 px-3 py-1.5 rounded-lg text-xs font-bold transition">Server 1 (VidLink)</button>
-        <button id="btn-vidfast" onclick="changeProvider('vidfast')" class="server-btn bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold transition">Server 2 (VidFast)</button>
-        <button id="btn-vidsrc" onclick="changeProvider('vidsrc')" class="server-btn bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold transition">Server 3 (VidSrc)</button>
+    <div class="bg-gray-900/40 border border-gray-800/80 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Pilih Server:</span>
+        <button id="btn-vidlink" tabindex="0" onclick="changeProvider('vidlink')" class="server-btn bg-red-600 px-4 py-2 rounded-xl text-xs font-bold transition">Server 1 (VidLink)</button>
+        <button id="btn-vidfast" tabindex="0" onclick="changeProvider('vidfast')" class="server-btn bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-xl text-xs font-bold transition">Server 2 (VidFast)</button>
+        <button id="btn-vidsrc" tabindex="0" onclick="changeProvider('vidsrc')" class="server-btn bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-xl text-xs font-bold transition">Server 3 (VidSrc)</button>
       </div>
+      <p class="text-[11px] text-gray-500">Tukar server jika video tidak dimuatkan.</p>
     </div>
+
   </div>
 
   <footer class="bg-gray-950 border-t border-gray-900 py-6 text-center text-xs text-gray-600 mt-12">
-    <p>© HJMflix — Built with TMDB API & Vercel</p>
+    <p>© HJMflix TV — Powered by TMDB API & Vercel</p>
   </footer>
 
-  <script>
-    let currentTmdbId = null;
-    let currentMediaType = 'movie';
-
-    // Variable State Navigation
-    let currentPlatformKey = '';
-    let currentPlatformTitle = '';
-    let currentPlatformPage = 1;
-    let currentSearchQuery = '';
-    let currentSearchPage = 1;
-
-    function hideAllSections() {
-      document.getElementById('homepageSections').classList.add('hidden');
-      document.getElementById('platformPageSection').classList.add('hidden');
-      document.getElementById('searchResultsSection').classList.add('hidden');
-    }
-
-    async function loadHomepage() {
-      hideAllSections();
-      document.getElementById('homepageSections').classList.remove('hidden');
-      document.getElementById('searchInput').value = '';
-
-      fetchSection('netflix_movies', 'netflixMoviesGrid', 'movie', 1, 10);
-      fetchSection('netflix_tv', 'netflixTvGrid', 'tv', 1, 10);
-      fetchSection('prime_movies', 'primeMoviesGrid', 'movie', 1, 10);
-      fetchSection('prime_tv', 'primeTvGrid', 'tv', 1, 10);
-      fetchSection('disney_movies', 'disneyMoviesGrid', 'movie', 1, 10);
-      fetchSection('disney_tv', 'disneyTvGrid', 'tv', 1, 10);
-      fetchSection('hbo_movies', 'hboMoviesGrid', 'movie', 1, 10);
-      fetchSection('hbo_tv', 'hboTvGrid', 'tv', 1, 10);
-    }
-
-    async function openPlatformPage(platformKey, platformTitle, page = 1) {
-      currentPlatformKey = platformKey;
-      currentPlatformTitle = platformTitle;
-      currentPlatformPage = page;
-
-      hideAllSections();
-      const platformSection = document.getElementById('platformPageSection');
-      platformSection.classList.remove('hidden');
-      
-      document.getElementById('platformPageTitle').innerText = `${platformTitle} Hub — Page ${page}`;
-      document.getElementById('platformPageNum').innerText = `Page ${page}`;
-      document.getElementById('platformPrevBtn').disabled = page <= 1;
-
-      fetchSection(`${platformKey}_movies`, 'platformMoviesGrid', 'movie', page, 20);
-      fetchSection(`${platformKey}_tv`, 'platformTvGrid', 'tv', page, 20);
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function changePlatformPage(delta) {
-      const newPage = currentPlatformPage + delta;
-      if (newPage >= 1) {
-        openPlatformPage(currentPlatformKey, currentPlatformTitle, newPage);
-      }
-    }
-
-    async function fetchSection(category, gridId, mediaType, page = 1, limit = 20) {
-      const grid = document.getElementById(gridId);
-      grid.innerHTML = '<p class="col-span-full text-gray-500 text-xs py-4">Memuatkan...</p>';
-
-      try {
-        const res = await fetch(`/api/movies?category=${category}&page=${page}`);
-        const data = await res.json();
-        if (data.results) {
-          displayGrid(data.results.slice(0, limit), grid, mediaType, limit === 10);
-        }
-      } catch (err) {
-        grid.innerHTML = `<p class="col-span-full text-red-500 text-xs">Gagal memuatkan data.</p>`;
-      }
-    }
-
-    function displayGrid(items, gridElement, mediaType, showRank = false) {
-      if (!items || items.length === 0) {
-        gridElement.innerHTML = `<p class="col-span-full text-gray-500 text-xs py-4">Tiada kandungan.</p>`;
-        return;
-      }
-
-      gridElement.innerHTML = items.map((m, index) => {
-        const itemType = (mediaType && mediaType !== 'multi') ? mediaType : (m.media_type || 'movie');
-        const title = m.title || m.name;
-        const date = m.release_date || m.first_air_date || '';
-        const year = date ? date.split('-')[0] : 'N/A';
-        const typeLabel = itemType === 'tv' ? 'TV' : 'Movie';
-
-        return `
-          <div onclick="playMedia(${m.id}, '${itemType}', '${title.replace(/'/g, "\\'")}')" 
-               class="group cursor-pointer bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-red-600/50 hover:scale-105 transition duration-300 shadow-md relative">
-            
-            ${showRank ? `
-              <div class="absolute top-2 left-2 z-10 bg-red-600/90 backdrop-blur-sm text-white font-black text-xs px-2 py-0.5 rounded shadow">
-                #${index + 1}
-              </div>
-            ` : ''}
-
-            <div class="relative">
-              <img src="${m.poster_path ? 'https://image.tmdb.org/t/p/w500' + m.poster_path : 'https://via.placeholder.com/500x750?text=No+Poster'}" 
-                   alt="${title}" class="w-full h-auto object-cover" loading="lazy">
-              <span class="absolute top-2 right-2 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded border border-gray-700 font-bold uppercase ${itemType === 'tv' ? 'text-yellow-400' : 'text-white'}">
-                ${typeLabel}
-              </span>
-            </div>
-            <div class="p-2.5">
-              <p class="text-xs font-semibold truncate group-hover:text-red-500 transition">${title}</p>
-              <p class="text-[10px] text-gray-400 mt-0.5">${year}</p>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    async function searchMedia(page = 1) {
-      const query = document.getElementById('searchInput').value.trim();
-      if (!query) return loadHomepage();
-
-      currentSearchQuery = query;
-      currentSearchPage = page;
-
-      hideAllSections();
-      const searchSection = document.getElementById('searchResultsSection');
-      const searchGrid = document.getElementById('searchGrid');
-      
-      searchSection.classList.remove('hidden');
-      document.getElementById('searchTitle').innerText = `Hasil Carian: "${query}" (Page ${page})`;
-      document.getElementById('searchPageNum').innerText = `Page ${page}`;
-      document.getElementById('searchPrevBtn').disabled = page <= 1;
-
-      searchGrid.innerHTML = '<p class="col-span-full text-gray-500 text-sm py-8">Mencari...</p>';
-
-      try {
-        const res = await fetch(`/api/movies?type=search&query=${encodeURIComponent(query)}&page=${page}`);
-        const data = await res.json();
-        
-        displayGrid(data.results || [], searchGrid, 'multi', false);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } catch (err) {
-        searchGrid.innerHTML = '<p class="col-span-full text-red-500 text-sm">Gagal carian.</p>';
-      }
-    }
-
-    function changeSearchPage(delta) {
-      const newPage = currentSearchPage + delta;
-      if (newPage >= 1) {
-        searchMedia(newPage);
-      }
-    }
-
-    function playMedia(id, type, title) {
-      currentTmdbId = id;
-      currentMediaType = type;
-      
-      document.getElementById('playerMediaTitle').innerText = title;
-      document.getElementById('playerModal').classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-
-      const tvControls = document.getElementById('tvControls');
-      if (type === 'tv') {
-        tvControls.classList.remove('hidden');
-        document.getElementById('seasonInput').value = 1;
-        document.getElementById('episodeInput').value = 1;
-      } else {
-        tvControls.classList.add('hidden');
-      }
-
-      changeProvider('vidlink');
-    }
-
-    function updateTvStream() {
-      const activeBtn = document.querySelector('.server-btn.bg-red-600');
-      const provider = activeBtn ? activeBtn.id.replace('btn-', '') : 'vidlink';
-      changeProvider(provider);
-    }
-
-    function changeProvider(provider) {
-      const iframe = document.getElementById('videoPlayer');
-      const season = document.getElementById('seasonInput').value || 1;
-      const episode = document.getElementById('episodeInput').value || 1;
-
-      if (currentMediaType === 'tv') {
-        if (provider === 'vidlink') iframe.src = `https://vidlink.pro/tv/${currentTmdbId}/${season}/${episode}`;
-        else if (provider === 'vidfast') iframe.src = `https://vidfast.vc/tv/${currentTmdbId}/${season}/${episode}`;
-        else if (provider === 'vidsrc') iframe.src = `https://vidsrcme.ru/embed/tv/${currentTmdbId}/${season}/${episode}`;
-      } else {
-        if (provider === 'vidlink') iframe.src = `https://vidlink.pro/movie/${currentTmdbId}`;
-        else if (provider === 'vidfast') iframe.src = `https://vidfast.vc/movie/${currentTmdbId}`;
-        else if (provider === 'vidsrc') iframe.src = `https://vidsrcme.ru/embed/movie/${currentTmdbId}`;
-      }
-
-      document.querySelectorAll('.server-btn').forEach(btn => {
-        btn.classList.remove('bg-red-600');
-        btn.classList.add('bg-gray-800', 'hover:bg-gray-700');
-      });
-      const activeBtn = document.getElementById(`btn-${provider}`);
-      if (activeBtn) {
-        activeBtn.classList.remove('bg-gray-800', 'hover:bg-gray-700');
-        activeBtn.classList.add('bg-red-600');
-      }
-    }
-
-    function closePlayer() {
-      document.getElementById('playerModal').classList.add('hidden');
-      document.getElementById('videoPlayer').src = '';
-      document.body.style.overflow = 'auto';
-    }
-
-    document.getElementById('searchInput').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') searchMedia(1);
-    });
-
-    loadHomepage();
-  </script>
+  <!-- SKRIP DIANGGIL DI SINI -->
+  <script src="api.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,12 @@
+{
+  "name": "hjmflix",
+  "version": "1.0.0",
+  "description": "HJMflix TV Edition - Web & Android TV Streaming App",
+  "main": "index.html",
+  "scripts": {
+    "start": "servor"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}

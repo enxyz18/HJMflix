@@ -1,0 +1,22 @@
+/* ==========================================
+   TV REMOTE D-PAD FOCUS HIGHLIGHT & STYLES
+   ========================================== */
+
+/* Menyerlahkan mana-mana elemen yang sedang difokuskan oleh remote TV */
+:focus {
+  outline: 4px solid #ef4444 !important;
+  outline-offset: 3px !important;
+  transform: scale(1.05);
+  transition: transform 0.15s ease-in-out, outline 0.15s ease-in-out;
+  z-index: 30 !important;
+}
+
+/* Hilangkan scrollbar untuk kemasan TV */
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
