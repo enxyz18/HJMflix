@@ -297,7 +297,7 @@ const STREAM_PROVIDERS = {
       const base = type === 'tv' 
         ? `https://vidlink.pro/tv/${id}/${season}/${episode}`
         : `https://vidlink.pro/movie/${id}`;
-      return `${base}?player=jw&primaryColor=05c7c4&autoplay=true`;
+      return `${base}?player=jw`;
     }
   },
   vidfast: {
@@ -306,16 +306,16 @@ const STREAM_PROVIDERS = {
       const base = type === 'tv' 
         ? `https://vidfast.vc/tv/${id}/${season}/${episode}`
         : `https://vidfast.vc/movie/${id}`;
-      return `${base}?autoPlay=true&sub=en,my`;
+      return `${base}?sub=en,my`;
     }
   },
   vidsrc: {
     allow: "autoplay; fullscreen; encrypted-media",
     buildUrl: (type, id, season, episode) => {
-      const base = type === 'tv'
-        ? `https://vidsrcme.ru/embed/tv/${id}/${season}/${episode}`
-        : `https://vidsrcme.ru/embed/movie/${id}`;
-      return `${base}?autoplay=1&ds_lang=en,my`;   
+      // Customization VidSrc
+      return type === 'tv' 
+        ? `https://vidsrcme.ru/embed/tv/${id}/${season}/${episode}?ds_lang=en,my`
+        : `https://vidsrcme.ru/embed/movie/${id}?ds_lang=en,my`;      
     }
   }
 };
