@@ -1,0 +1,26 @@
+{
+  "name": "HJMflix - Movie & TV Streaming App",
+  "short_name": "HJMflix",
+  "description": "Aplikasi strim filem dan siri TV untuk Mobile dan Android TV",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "categories": ["entertainment", "tv"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
