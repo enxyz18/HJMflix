@@ -287,8 +287,38 @@ function renderHorizontalCards(items, elementId, defaultType) {
 }
 
 /* ==========================================
-   LOGIK WATCH PAGE
+   LOGIK WATCH PAGE & PROVIDER CONFIG
    ========================================== */
+
+const STREAM_PROVIDERS = {
+  vidlink: {
+    allow: "autoplay; encrypted-media; fullscreen",
+    buildUrl: (type, id, season, episode) => {
+      const base = type === 'tv' 
+        ? `https://vidlink.pro/tv/${id}/${season}/${episode}`
+        : `https://vidlink.pro/movie/${id}`;
+      return `${base}?player=jw&primaryColor=05c7c4&autoplay=true`;
+    }
+  },
+  vidfast: {
+    allow: "autoplay; fullscreen",
+    buildUrl: (type, id, season, episode) => {
+      const base = type === 'tv' 
+        ? `https://vidfast.vc/tv/${id}/${season}/${episode}`
+        : `https://vidfast.vc/movie/${id}`;
+      return `${base}?autoPlay=true&sub=en,my`;
+    }
+  },
+  vidsrc: {
+    allow: "autoplay; fullscreen; encrypted-media",
+    buildUrl: (type, id, season, episode) => {
+      const base = type === 'tv'
+        ? `https://vidsrcme.ru/embed/tv/${id}/${season}/${episode}`
+        : `https://vidsrcme.ru/embed/movie/${id}`;
+      return `${base}?autoplay=1&ds_lang=en,my`;   
+    }
+  }
+};
 
 function playMedia(id, type, title, season = 1, episode = 1) {
   window.currentTmdbId = id;
@@ -336,7 +366,27 @@ function adjustEpisode(delta) {
   }
 }
 
+function updateStreamUrl() {
+  const iframe = document.getElementById('videoPlayer');
+  if (!iframe) return;
+
+  const providerConfig = STREAM_PROVIDERS[window.currentProvider] || STREAM_PROVIDERS.vidlink;
+
+  iframe.setAttribute('allow', providerConfig.allow);
+
+  const streamUrl = providerConfig.buildUrl(
+    window.currentMediaType,
+    window.currentTmdbId,
+    window.currentSeason,
+    window.currentEpisode
+  );
+
+  iframe.src = streamUrl;
+}
+
 function changeProvider(provider) {
+  if (!STREAM_PROVIDERS[provider]) return;
+  
   window.currentProvider = provider;
   updateStreamUrl();
 
@@ -344,25 +394,11 @@ function changeProvider(provider) {
     btn.classList.remove('bg-red-600');
     btn.classList.add('bg-gray-800', 'hover:bg-gray-700');
   });
+  
   const activeBtn = document.getElementById(`btn-${provider}`);
   if (activeBtn) {
     activeBtn.classList.remove('bg-gray-800', 'hover:bg-gray-700');
     activeBtn.classList.add('bg-red-600');
-  }
-}
-
-function updateStreamUrl() {
-  const iframe = document.getElementById('videoPlayer');
-  if (!iframe) return;
-
-  if (window.currentMediaType === 'tv') {
-    if (window.currentProvider === 'vidlink') iframe.src = `https://vidlink.pro/tv/${window.currentTmdbId}/${window.currentSeason}/${window.currentEpisode}`;
-    else if (window.currentProvider === 'vidfast') iframe.src = `https://vidfast.vc/tv/${window.currentTmdbId}/${window.currentSeason}/${window.currentEpisode}`;
-    else if (window.currentProvider === 'vidsrc') iframe.src = `https://vidsrcme.ru/embed/tv/${window.currentTmdbId}/${window.currentSeason}/${window.currentEpisode}`;
-  } else {
-    if (window.currentProvider === 'vidlink') iframe.src = `https://vidlink.pro/movie/${window.currentTmdbId}`;
-    else if (window.currentProvider === 'vidfast') iframe.src = `https://vidfast.vc/movie/${window.currentTmdbId}`;
-    else if (window.currentProvider === 'vidsrc') iframe.src = `https://vidsrcme.ru/embed/movie/${window.currentTmdbId}`;
   }
 }
 
@@ -374,7 +410,9 @@ function closeWatchPage() {
   document.getElementById('homepageSections')?.classList.remove('hidden');
 }
 
-// INITIALIZATION
+/* ==========================================
+   INITIALIZATION & EVENT LISTENERS
+   ========================================== */
 document.addEventListener('DOMContentLoaded', () => {
   loadHomepage();
 
