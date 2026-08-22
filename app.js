@@ -15,7 +15,10 @@ window.currentSearchPage = 1;
 window.currentDetailsTvId = null;
 
 function hideAllSections() {
-  document.getElementById('mainLayout')?.classList.add('hidden');
+  // PASTIKAN mainLayout SENTIASA DIPAPARKAN (sebab ia pegang Menu Sidebar)
+  document.getElementById('mainLayout')?.classList.remove('hidden');
+
+  // Sembunyikan seksyen kandungan di dalam sahaja
   document.getElementById('homepageSections')?.classList.add('hidden');
   document.getElementById('platformPageSection')?.classList.add('hidden');
   document.getElementById('searchResultsSection')?.classList.add('hidden');
