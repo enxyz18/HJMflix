@@ -1,9 +1,6 @@
 // ==========================================
-// CONFIGURATION & GLOBAL VARIABLES
+// GLOBAL VARIABLES
 // ==========================================
-const API_KEY = 'YOUR_TMDB_API_KEY'; // Gantikan dengan API key TMDB anda jika perlu
-const BASE_URL = 'https://api.themoviedb.org/3';
-
 let currentMedia = {
   type: 'movie', // 'movie' atau 'tv'
   id: null,
@@ -17,6 +14,13 @@ let currentSearchQuery = '';
 let currentSearchPage = 1;
 let currentPlatform = '';
 let currentPlatformPage = 1;
+
+// ==========================================
+// INITIALIZATION
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+  loadHomepage();
+});
 
 // ==========================================
 // PAGE NAVIGATION & SECTION TOGGLES
@@ -41,10 +45,15 @@ function hideAllSections() {
 /**
  * Membuka Laman Utama (Homepage Top 10)
  */
-function loadHomepage() {
+async function loadHomepage() {
   hideAllSections();
   document.getElementById('homepageSections')?.classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Panggil data dari api/movies.js jika belum dimuatkan
+  if (typeof fetchHomepageData === 'function') {
+    fetchHomepageData();
+  }
 }
 
 /**
@@ -94,8 +103,8 @@ async function openDetailsPage(mediaType, id) {
   currentMedia.episode = 1;
 
   try {
-    // Ambil maklumat asas dari TMDB
-    const res = await fetch(`${BASE_URL}/${mediaType}/${id}?api_key=${API_KEY}&append_to_response=credits,similar,recommendations`);
+    // Panggil Vercel Serverless Endpoint (api/movies.js)
+    const res = await fetch(`/api/movies?action=details&type=${mediaType}&id=${id}`);
     const data = await res.json();
 
     currentMedia.title = data.title || data.name;
@@ -215,7 +224,7 @@ function playMedia(type, id, season = 1, episode = 1) {
 }
 
 /**
- * Penjanaan URL mengikut Provider
+ * Penjanaan URL mengikut Provider & Parameter Tambahan
  */
 function updatePlayerURL() {
   const { type, id, season, episode } = currentMedia;
@@ -311,7 +320,7 @@ async function loadEpisodes(tvId, seasonNum) {
   grid.innerHTML = '<p class="text-xs text-gray-500 col-span-full">Memuatkan episod...</p>';
 
   try {
-    const res = await fetch(`${BASE_URL}/tv/${tvId}/season/${seasonNum}?api_key=${API_KEY}`);
+    const res = await fetch(`/api/movies?action=season&id=${tvId}&season=${seasonNum}`);
     const data = await res.json();
 
     if (!data.episodes || data.episodes.length === 0) {
