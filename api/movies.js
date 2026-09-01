@@ -1,5 +1,5 @@
 module.exports = async (req, res) => {
-  const TMDB_API_KEY = process.env.TMDB_API_KEY || '6f4810fbefb85fb2fb5aebe5dc26f0f1';
+  const TMDB_API_KEY = process.env.TMDB_API_KEY;
   const { type, category, query, page = 1, id, media_type, season_number = 1 } = req.query;
 
   res.setHeader('Access-Control-Allow-Origin', '*');

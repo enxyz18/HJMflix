@@ -13,6 +13,7 @@ window.currentPlatformTitle = '';
 window.currentPlatformPage = 1;
 window.currentSearchPage = 1;
 window.currentDetailsTvId = null;
+window.lastActiveSection = 'homepageSections'; // Default ke homepage
 
 function hideAllSections() {
   // PASTIKAN mainLayout SENTIASA DIPAPARKAN (sebab ia pegang Menu Sidebar)
@@ -324,6 +325,16 @@ const STREAM_PROVIDERS = {
 };
 
 function playMedia(id, type, title, season = 1, episode = 1) {
+  // 1. Kenal pasti & simpan seksyen yang sedang aktif sebelum disembunyikan
+  const sections = ['detailsPageSection', 'platformPageSection', 'searchResultsSection', 'homepageSections'];
+  for (const secId of sections) {
+    const secEl = document.getElementById(secId);
+    if (secEl && !secEl.classList.contains('hidden')) {
+      window.lastActiveSection = secId;
+      break;
+    }
+  }
+
   window.currentTmdbId = id;
   window.currentMediaType = type;
   window.currentSeason = season;
@@ -331,9 +342,7 @@ function playMedia(id, type, title, season = 1, episode = 1) {
   window.currentProvider = 'vidlink';
 
   hideAllSections();
-  // Sembunyikan mainLayout (iaitu Sidebar + Kandungan) khas semasa menonton
   document.getElementById('mainLayout')?.classList.add('hidden');
-  // Paparkan ruangan video player
   document.getElementById('watchPageSection')?.classList.remove('hidden');
   
   const displayTitle = type === 'tv' ? `${title} (S${season} E${episode})` : title;
@@ -411,9 +420,13 @@ function changeProvider(provider) {
 function closeWatchPage() {
   const iframe = document.getElementById('videoPlayer');
   if (iframe) iframe.src = '';
+  
   hideAllSections();
   document.getElementById('mainLayout')?.classList.remove('hidden');
-  document.getElementById('homepageSections')?.classList.remove('hidden');
+
+  // Buka semula seksyen terakhir yang dimasuki pengguna (Details, Search, Platform, atau Home)
+  const previousSection = window.lastActiveSection || 'homepageSections';
+  document.getElementById(previousSection)?.classList.remove('hidden');
 }
 
 /* ==========================================
