@@ -435,6 +435,20 @@ function closeWatchPage() {
 document.addEventListener('DOMContentLoaded', () => {
   loadHomepage();
 
+  const hash = window.location.hash;
+  if (hash.startsWith('#watch')) {
+    const params = new URLSearchParams(hash.replace('#watch?', ''));
+    const id = params.get('id');
+    const type = params.get('type') || 'movie';
+    const season = parseInt(params.get('season')) || 1;
+    const episode = parseInt(params.get('episode')) || 1;
+
+    if (id) {
+      // Buka terus pemain video bagi kandungan berkenaan
+      playMedia(id, type, 'Kandungan Dikongsi', season, episode);
+    }
+  }
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' || e.key === 'Backspace') {
       const watchSection = document.getElementById('watchPageSection');
@@ -451,3 +465,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+//Fungsi Share link 
+function shareCurrentMedia() {
+  if (!window.currentTmdbId) return;
+
+  // Cipta URL khas bertetapan Hash/Query Parameters
+  const shareUrl = `${window.location.origin}${window.location.pathname}#watch?id=${window.currentTmdbId}&type=${window.currentMediaType}&season=${window.currentSeason}&episode=${window.currentEpisode}`;
+
+  // Guna native share menu jika disokong (contoh: di telefon bimbit / WhatsApp)
+  if (navigator.share) {
+    navigator.share({
+      title: document.getElementById('watchMediaTitle')?.innerText || 'HJMflix',
+      text: 'Jom tonton ini di HJMflix!',
+      url: shareUrl
+    }).catch(() => {});
+  } else {
+    // Fallback: Copy ke clipboard untuk PC/Desktop
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      alert('Pautan telah disalin ke clipboard!');
+    });
+  }
+}
